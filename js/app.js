@@ -24,7 +24,8 @@ document.onreadystatechange = function() {
     var error_messages = {
         "empty_string": "URL string cannot be empty.",
         "illegal_chars": "URL cannot contain: backticks (`), empty spaces, backslashes (\\), and less than (<) or greater signs (>).",
-        "get_tlds": "URL does not contain possible TLDs.",
+        "no_possible_tlds": "URL does not contain possible TLDs.",
+        "no_cleaned_tlds": "URL does not contain any TLDs.",
         "no_sld_provided": "URL does not contain a SLD.",
         "cc_sld_mismatch": "URL ccTLD matchup is invalid.",
         "tld_validation_failed": "URL does not contain a valid TLD.",
@@ -116,23 +117,33 @@ document.onreadystatechange = function() {
             // characters to escape: . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
             // (source)[http://stackoverflow.com/questions/5105143/list-of-all-characters-that-should-be-escaped-before-put-in-to-regex]
             // get the tld matches
-            var tld_matches = (url_object.url.match(/\.([^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\/\?])+[\/|:\/]/gi) || []);
+            var tld_matches = (url_object.url.match(/(\.|\:\/\/|@)([^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\/\?])+[\/|:\/]/gi) || []);
             // if no tld matches...set error
             if (!tld_matches.length) {
-                error(url_object, "get_tlds");
+                error(url_object, "no_possible_tlds");
                 return;
             }
             // check matches
             var cleaned_matches = [];
             loop1:
                 for (var i = 0, l = tld_matches.length; i < l; i++) {
-                    var tld_match = tld_matches[i].replace(/^\.|\:$/g, "").split("."),
-                        ll = tld_match.length;
+                    var tld_match = tld_matches[i].replace(/^[\:\/\/|\.|@]+|\:$/g, ""),
+                        tld_match_parts = tld_match.split("."),
+                        ll = tld_match_parts.length;
                     // matches must have at least 2 levels
-                    if (ll <= 1) continue;
+                    if (ll <= 1) {
+                        // check if url is localhost
+                        if (tld_match === "localhost") {
+                            cleaned_matches.push(tld_match);
+                            // set tld
+                            url_object.tld = tld_match;
+                            url_object.cleaned_tld = tld_matches[i];
+                        }
+                        continue;
+                    }
                     // now check that there are no empty levels. (i.e. google..com, multiple periods)
                     for (var j = 0; j < ll; j++) {
-                        if (tld_match[j] === "") {
+                        if (tld_match_parts[j] === "") {
                             // skip inner loop and continue with the outer loop
                             // a tld within this match is empty
                             continue loop1;
@@ -143,7 +154,7 @@ document.onreadystatechange = function() {
                 }
                 // finally check for cleaned match count
             if (!cleaned_matches.length) {
-                error(url_object, "get_tlds");
+                error(url_object, "no_cleaned_tlds");
                 return;
             }
             // add matches to url object
@@ -155,6 +166,8 @@ document.onreadystatechange = function() {
          * @return {Boolean}           [True => valid tld found. Otherwise false.]
          */
         "validate_tld": function(url_object) {
+            // if tld === localhost, skip tld validation
+            if (url_object.tld && url_object.tld === "localhost") return;
             // step 3: check for a valid tld
             // get the tld matches
             var tld_matches = url_object.tld_matches;
@@ -170,13 +183,12 @@ document.onreadystatechange = function() {
                 var current_tld = tld_matches[i].replace(/^\.|[\/|\:]$/g, "");
                 // get dot delimeter count
                 // start with the most right and move left
-                var tld_parts = current_tld.split(".").reverse(); // ["google", "co", "uk"]
+                var tld_parts = current_tld.split(".").reverse();
                 for (var j = 0, ll = tld_parts.length; j < ll; j++) {
                     // cache the tld
                     var tld = tld_parts[j];
                     // check if tld is a country code
                     if (all_tlds.country_code.indexOf(tld) === -1) { // not a country code
-                        console.log("not a country code");
                         // tld (right most part) is anything but a country code
                         // cycle through the all tlds anc check if tls exists
                         for (var level in all_tlds) {
@@ -184,10 +196,8 @@ document.onreadystatechange = function() {
                             if (all_tlds[level] === "country_code") continue;
                             // loop through all others
                             if (all_tlds[level].indexOf(tld) !== -1) {
-                                console.log("111", tld);
                                 // check if domain is a top 10,000 domain
                                 if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
-                                // console.log(">>>>>>>", tld_matches[i]);
                                 // add tld to url_object
                                 url_object.tld = tld;
                                 url_object.cleaned_tld = tld_matches[i];
@@ -197,24 +207,19 @@ document.onreadystatechange = function() {
                         // for non countryTLD the TLD must be the part at the very right
                         // therefore if this righmost item does not match anything
                         // the URL is invalid. TLD needs to be in a level.
-                        // console.log("222", tld_parts);
                         error(url_object, "non_cc_tld_valitation_fail");
                         return;
                     } else { // is a country code
-                        console.log("is a country code");
                         // check if tld has any slds
-                        if (without_slds.indexOf(tld) === -1) { // has slds
-                            console.log("tld has allowed slds", tld);
+                        if (without_slds.indexOf(tld) === -1) { // tld has allowed slds
                             // check if sld is an allowed sld
                             var sld = tld_parts[j + 1];
-                            if (!sld) {
-                                console.log("no sld provided");
+                            if (!sld) { // no sld provided
                                 error(url_object, "no_sld_provided");
                                 return;
                             }
-                            if (with_slds[tld].indexOf(sld) !== -1) { // allowed sld
-                                console.log('the sld is allowed');
-                                // check if domain is a top 10,000 domain
+                            if (with_slds[tld].indexOf(sld) !== -1) { // sld is allowed
+                                // check if domain is in top 10,000 domains
                                 if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
                                 // add the sld to the tld
                                 url_object.tld = sld + "." + tld;
@@ -225,8 +230,7 @@ document.onreadystatechange = function() {
                                 error(url_object, "cc_sld_mismatch");
                                 return;
                             }
-                        } else { // does not have any slds
-                            console.log('tld does not have any slds');
+                        } else { // tld does not have any slds
                             url_object.tld = tld;
                             url_object.cleaned_tld = tld_matches[i];
                             return;
@@ -252,13 +256,11 @@ document.onreadystatechange = function() {
          * @return {Boolean}           [Returns true if parsing was successful. Otherwise, return false.]
          */
         "work_left": function(url_object) {
-            console.log("INSIDE")
-                // left side format: http://username:password@www.subdomain.example.com/
-                // step 6.0: before anything remove the tld
-                // remove the tld from the left
-                // console.log("????????????", url_object.left, url_object.tld);
-            url_object.left = url_object.left.replace(new RegExp("\." + url_object.tld + "$"), "");
-            // console.log("????????????", url_object.left);
+            // left side format: http://username:password@www.subdomain.example.com/
+            // step 6.0: before anything remove the tld
+            // remove the tld from the left
+            // skipi this for localhost
+            if (url_object.tld !== "localhost") url_object.left = url_object.left.replace(new RegExp("\." + url_object.tld + "$"), "");
             // step 6.1: get scheme
             var schemes = ["https://", "http://", "file://", "ftp://", "sftp://", "mysql://", "mailto://", "data:", /*camera Real Time Streaming scheme*/ "rtsp://", /*microsoft media server*/ "mms://", "hdfs://", "s3://", "s3n://", "s3bfs://", /*when not provided, i.e. google.com, scheme is set to null as it is not neccessary*/ null];
             var scheme = ((url_object.left.match(/^[a-z][a-z0-9\-]+\:\/\//gi) || [])[0]) || null;
@@ -321,15 +323,12 @@ document.onreadystatechange = function() {
                     if (subdomains[i].replace(/[^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\.\/\?]/g, "") === "") {
                         url_object.subdomains.push(subdomains[i]);
                     } else {
-                        error(url_object, "invalid_sudomain")
+                        error(url_object, "invalid_sudomain");
                         return;
                         // break;
                     }
                 }
             }
-            console.log("DONE WITH THE LEFT");
-            // 6.5: remove left property. no longer needed
-            delete url_object.left;
             // left parsed successfully!
         },
         /**
@@ -375,8 +374,7 @@ document.onreadystatechange = function() {
             }
             // step 7.4: reset path
             url_object.path = url_object.right;
-            // step 7.5: remove right property. no longer needed
-            delete url_object.right;
+            // right parsed successfully!
         },
         /**
          * @description [Must be called at the end to check if second to last step set validity to false.]
@@ -395,7 +393,7 @@ document.onreadystatechange = function() {
         // loop through all parsing steps
         for (var i = 0, l = algorithm.length; i < l; i++) {
             // if url is invalid stop function execution
-            console.log("STEP:", algorithm[i]);
+            // console.log("STEP:", algorithm[i]);
             if (url.error) break;
             steps[algorithm[i]](url);
         }
