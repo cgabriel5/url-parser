@@ -28,8 +28,6 @@ document.onreadystatechange = function() {
         "tld_validation_failed": "URL does not contain a valid TLD.",
         "non_cc_tld_valitation_fail": "URLs TLD is a non-ccTLD and failed non-ccTLD validation; TLD seems to not exist.",
         "no_valid_tld": "No valid tld found.",
-        "work_left:scheme:1": "No valid scheme.",
-        "work_left:domain:1": "No domain.",
         "no_scheme": "No valid scheme.",
         "no_domain": "No domain.",
         "invalid_sudomain": "URL contains an wrongly formated subdomain."
@@ -246,8 +244,7 @@ document.onreadystatechange = function() {
             url_object.scheme = (scheme) ? scheme.replace("://", "") : scheme;
             // (§) GET DOMAIN NAME
             // if the left is empty here there is no domain or anything else and pointless to continue parsing
-            // if (url_object.left === "") return error(url_object, { "msg": "No domain.", "step": "work_left:domain:1.1" });
-            // get domain
+            // if (url_object.left === "") return error(url_object, "no_domain");
             var domain = (url_object.left.match(/[a-z0-9\-]+$/i) || [])[0];
             // if no domain..set error
             if (!domain) return error(url_object, "no_domain");
