@@ -338,15 +338,6 @@ document.onreadystatechange = function() {
          * @return {Boolean}           [Returns true if parsing was successful. Otherwise, return false.]
          */
         "work_right": function(url_object) {
-            // // step 7.0: get fragment
-            // var fragment_index = url_object.right.indexOf("#");
-            // if (fragment_index !== -1) { // has fragment
-            //     console.log("has fragment");
-            //     // set fragment
-            //     url_object.fragment = url_object.right.substring(fragment_index + 1, url_object.right.length - 1);
-            //     // remove fragment from right
-            //     url_object.right = url_object.right.substring(0, fragment_index);
-            // }
             // step 7.0: extract port if present
             var port_matches = (url_object.right.match(/^\:(\d+)?\//) || []);
             if (port_matches.length) {
@@ -357,7 +348,15 @@ document.onreadystatechange = function() {
             }
             // step 7.1: set url_object path
             url_object.path = url_object.right;
-            // step 7.4: get query
+            // step 7.2: get fragment
+            var fragment_index = url_object.right.indexOf("#");
+            if (fragment_index !== -1) { // has fragment
+                // set fragment
+                url_object.fragment = url_object.right.substring(fragment_index + 1, url_object.right.length - 1);
+                // remove fragment from right
+                url_object.right = url_object.right.substring(0, fragment_index);
+            }
+            // step 7.3: get query
             var query_index = url_object.right.indexOf("?");
             if (query_index !== -1) { // has query
                 // set query
@@ -374,9 +373,9 @@ document.onreadystatechange = function() {
                     url_object.parameters[parameter[0]] = parameter[1];
                 }
             }
-            // step: 7.5 reset path
+            // step 7.4: reset path
             url_object.path = url_object.right;
-            // step 7.6: remove right property. no longer needed
+            // step 7.5: remove right property. no longer needed
             delete url_object.right;
         },
         /**
