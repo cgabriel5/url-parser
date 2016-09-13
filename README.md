@@ -1,8 +1,8 @@
 # url_parser
-A JavaScript URL parser. (status: experimental)
+An experimental JavaScript URL parser.
 
 ### What it does?
-Parses URL string to extract its scheme, authority (username & password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.
+Parses a properly formated URL string to extract its scheme, authority (username & password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.
 
 ### What it does not do.
 Does not parse URLs in the form of an IP address.
