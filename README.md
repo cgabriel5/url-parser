@@ -17,10 +17,3 @@ var url_parse = window.parse_url;
 parse_url("https://google.com/");
 parse_url("google.com");
 ```
-
-### Whats next?
-Alongside parsing, I would like to validate the URL based on its format.
-For example, this should fail validity test:
-```js
-parse_url("https://.com/"); // invalid, missing domain name
-```
