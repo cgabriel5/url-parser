@@ -2,16 +2,16 @@ document.onreadystatechange = function() {
     "use strict";
     /* [functions.utils] */
     /**
-     * @description [Removes unneeded porperties from url_object and resets url property to originally provided url.]
+     * @description [Removes unneeded porperties from url_object and resets URL property to originally provided url.]
      * @param {Object} url_object [The url_object to work with.]
      */
     function cleanup(url_object) {
-        // cache original url for later use
+        // cache original URL for later use
         var original_url = url_object.url_untouched;
         // names of keys to remove
         var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "url_untouched"];
         for (var i = 0, l = keys.length; i < l; i++) delete url_object[keys[i]];
-        // reset url to the ogirinally provided url
+        // reset URL to the ogirinally provided URL
         url_object.url = original_url;
     }
     /**
@@ -27,7 +27,7 @@ document.onreadystatechange = function() {
         "cc_sld_mismatch": "URL ccTLD matchup is invalid.",
         "tld_validation_failed": "URL does not contain a valid TLD.",
         "non_cc_tld_valitation_fail": "URLs TLD is a non-ccTLD and failed non-ccTLD validation; TLD seems to not exist.",
-        "no_valid_tld": "No valid tld found.",
+        "no_valid_tld": "No valid TLD found.",
         "no_scheme": "No valid scheme.",
         "no_domain": "No domain.",
         "invalid_sudomain": "URL contains an wrongly formated subdomain."
@@ -43,12 +43,13 @@ document.onreadystatechange = function() {
     }
     /**
      * @description [Makes a new url_object.]
-     * @param {String} url [The provided url string to parse.]
+     * @param {String} url [The provided URL string to parse.]
      * @return {Object}     [The newly made url_object.]
      */
     function url_object(url) {
         return {
             "error": false,
+            "auth": null,
             "top_domain": false,
             "url_untouched": url,
             "url": url,
@@ -75,18 +76,22 @@ document.onreadystatechange = function() {
             if (url_object.url === "") error(url_object, "empty_string");
         },
         /**
-         * @description [Add trailing slash to url if not originaly there.]
+         * @description [Add trailing slash to URL if not originaly there.]
          * @param {Object} url_object [The url_object to work this.]
          */
         "add_traling_slash": function(url_object) {
             var untouched_url = url_object.url_untouched;
+            // has trailing slash?
+            var has_trailing_slash = (untouched_url.charAt(untouched_url.length - 1) === "/");
             // add traling slash or missing
-            url_object.url = untouched_url + ((untouched_url.charAt(untouched_url.length - 1) === "/") ? "" : "/");
-            // add the url length to the url_object
+            url_object.url = untouched_url + (has_trailing_slash ? "" : "/");
+            // add the URL length to the url_object
             url_object.length = url_object.url.length;
+            // for later use keep record of trailing slash
+            url_object.tslash = has_trailing_slash;
         },
         /**
-         * @description [Checks url for presence of illegal characters. Sets error if so.]
+         * @description [Checks URL for presence of illegal characters. Sets error if so.]
          * @param {Object} url_object [The url_object to work with.]
          */
         "illegal_chars": function(url_object) {
@@ -101,13 +106,13 @@ document.onreadystatechange = function() {
          * @param {Object} url_object [The url_object to work with.]
          */
         "get_tlds": function(url_object) {
-            // find all tlds by matching anything but what is included in regex.
+            // find all TLDs by matching anything but what is included in regex.
             // match pattern => [periods/hyphens/and any letter character in any language]/
             // characters to escape: . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
             // (source)[http://stackoverflow.com/questions/5105143/list-of-all-characters-that-should-be-escaped-before-put-in-to-regex]
-            // get the tld matches
+            // get the TLD matches
             var tld_matches = (url_object.url.match(/(\.|\:\/\/|@)([^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\/\?])+[\/|:\/]/gi) || []);
-            // if no tld matches...set error
+            // if no TLD matches...set error
             if (!tld_matches.length) return error(url_object, "no_possible_tlds");
             // check matches
             var cleaned_matches = [];
@@ -118,7 +123,7 @@ document.onreadystatechange = function() {
                         ll = tld_match_parts.length;
                     // matches must have at least 2 levels
                     if (ll <= 1) {
-                        // only allow 1 tld present if it is localhost
+                        // only allow 1 TLD present if it is localhost
                         // anything else is not allowed
                         if (tld_match !== "localhost/") continue;
                     }
@@ -126,32 +131,32 @@ document.onreadystatechange = function() {
                     for (var j = 0; j < ll; j++) {
                         if (tld_match_parts[j] === "") {
                             // skip inner loop and continue with the outer loop
-                            // a tld within this match is empty
+                            // a TLD within this match is empty
                             continue loop1;
                         }
                     }
                     // everything good with the tld_match
                     cleaned_matches.push(tld_matches[i]);
                 }
-                // if no cleaned tlds...set error
+                // if no cleaned TLDs...set error
             if (!cleaned_matches.length) return error(url_object, "no_cleaned_tlds");
-            // add matches to url object
+            // add matches to url_object
             url_object.tld_matches = cleaned_matches;
         },
         /**
-         * @description [Goes over list of cleaned TLDs and tried t validate them. Uses the first valid TLD as the URL TLD.]
+         * @description [Goes over list of cleaned TLDs and tried t validate them. Uses the first valid TLD as the URL tLD.]
          * @param {Object} url_object [The url_object to work with.]
          */
         "validate_tld": function(url_object) {
-            // get the tld matches
+            // get TLD matches
             var tld_matches = url_object.tld_matches;
-            // get tld list from the global scope
+            // get TLD list from the global scope
             var tlds = window.constants.tlds,
                 all_tlds = tlds.all,
                 with_slds = tlds.with_slds,
                 without_slds = tlds.without_slds,
                 top_domains = tlds.top_domains;
-            // loop through the tlds
+            // loop through the TLDs
             for (var i = 0, l = tld_matches.length; i < l; i++) {
                 // remove starting dot(.)|:// and ending slash(/)|colon(:)
                 var current_tld = tld_matches[i].replace(/^[\.|\:\/\/]+|[\/|\:]+$/g, "");
@@ -159,12 +164,12 @@ document.onreadystatechange = function() {
                 // start with the most right and move left
                 var tld_parts = current_tld.split(".").reverse();
                 for (var j = 0, ll = tld_parts.length; j < ll; j++) {
-                    // cache the tld
+                    // cache the TLD
                     var tld = tld_parts[j];
-                    // check if tld is a country code
+                    // check if TLD is a country code
                     if (all_tlds.country_code.indexOf(tld) === -1) { // not a country code
-                        // tld (right most part) is anything but a country code
-                        // cycle through the all tlds anc check if tls exists
+                        // TLD (right most part) is anything but a country code
+                        // cycle through the all TLDs anc check if tls exists
                         for (var level in all_tlds) {
                             // *ignore the country codes
                             if (all_tlds[level] === "country_code") continue;
@@ -172,7 +177,7 @@ document.onreadystatechange = function() {
                             if (all_tlds[level].indexOf(tld) !== -1) {
                                 // check if domain is a top 10,000 domain
                                 if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
-                                // add tld to url_object
+                                // add TLD to url_object
                                 url_object.tld = tld;
                                 url_object.cleaned_tld = tld_matches[i];
                                 return;
@@ -183,17 +188,17 @@ document.onreadystatechange = function() {
                         // the URL is invalid. TLD needs to be in a level.
                         return error(url_object, "non_cc_tld_valitation_fail");
                     } else { // is a country code
-                        // check if tld has any slds
-                        if (without_slds.indexOf(tld) === -1) { // tld has allowed slds
-                            // check if sld is an allowed sld
+                        // check if TLD has any slds
+                        if (without_slds.indexOf(tld) === -1) { // TLD has allowed slds
+                            // check if SLD is an allowed sld
                             var sld = tld_parts[j + 1];
-                            if (!sld) { // no sld provided
+                            if (!sld) { // no SLD provided
                                 return error(url_object, "no_sld_provided");
                             }
-                            if (with_slds[tld].indexOf(sld) !== -1) { // sld is allowed
+                            if (with_slds[tld].indexOf(sld) !== -1) { // SLD is allowed
                                 // check if domain is in top 10,000 domains
                                 if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
-                                // add the sld to the tld
+                                // add the SLD to the TLD
                                 url_object.tld = sld + "." + tld;
                                 url_object.cleaned_tld = tld_matches[i];
                                 return;
@@ -201,7 +206,7 @@ document.onreadystatechange = function() {
                                 // invalid sld
                                 return error(url_object, "cc_sld_mismatch");
                             }
-                        } else { // tld does not have any slds
+                        } else { // TLD does not have any slds
                             url_object.tld = tld;
                             url_object.cleaned_tld = tld_matches[i];
                             return;
@@ -217,7 +222,7 @@ document.onreadystatechange = function() {
          * @param {Object} url_object [The url_object to work with.]
          */
         "split_url": function(url_object) {
-            // get the tld index
+            // get the TLD index
             var tld_index = url_object.url.indexOf(url_object.cleaned_tld),
                 tld_split_coint = tld_index + url_object.cleaned_tld.length - 1;
             // set breaks
@@ -231,7 +236,7 @@ document.onreadystatechange = function() {
         "work_left": function(url_object) {
             // left side format: http://username:password@www.subdomain.example.com/
             // (§) BEFORE ANYTHING REMOVE THE TLD
-            // remove the tld from the left
+            // remove the TLD from the left
             // skip this for localhost
             if (url_object.tld !== "localhost") url_object.left = url_object.left.replace(new RegExp("\." + url_object.tld + "$"), "");
             // (§) GET SCHEME
@@ -256,7 +261,7 @@ document.onreadystatechange = function() {
             var auth_index = url_object.left.indexOf("@");
             if (auth_index !== -1) {
                 // remove the auth from the left into its own property
-                url_object.auth = (url_object.left.substring(0, auth_index) || ":");
+                url_object.auth = (url_object.left.substring(0, auth_index) || null);
                 // reset the left
                 url_object.left = url_object.left.substring(auth_index, url_object.left.length - 1);
                 // parse auth
@@ -271,8 +276,6 @@ document.onreadystatechange = function() {
                     // only username or nothing
                     if (auth !== "") url_object.username = auth;
                 }
-            } else {
-                url_object.auth = ":";
             }
             // remove the @ sign
             url_object.left = url_object.left.replace(/^@/, "");
@@ -344,8 +347,23 @@ document.onreadystatechange = function() {
             var subdomains = url_object.subdomains,
                 tld = url_object.tld;
             // add hostname prop to object
-            // if the tld === localhost, use an empty string
+            // if the TLD === localhost, use an empty string
             url_object.hostname = ((subdomains.length) ? (subdomains.join(".") + ".") : "") + url_object.domain + (tld !== "localhost" ? ("." + tld) : "");
+        },
+        /**
+         * @description [Removes trailing slash from path if not originally set.]
+         * @param {Object} url_object [The url_object to work this.]
+         */
+        "remove_traling_slash": function(url_object) {
+            // cache tslash
+            var had_trailing_slash = url_object.tslash;
+            // check if URL has a fragment ot query
+            // no further checking neccessary
+            if (url_object.query || url_object.fragment) return;
+            // if it did not originally have..remove it if there
+            if (!had_trailing_slash) url_object.path = url_object.path.replace(/\/$/, "");
+            // else if it did have it we just leave it there...
+            // as this is the way the user provided the URL
         },
         /**
          * @description [Empty function must be called as last step trigger final parsability check.]
@@ -355,15 +373,15 @@ document.onreadystatechange = function() {
     /**
      * @description [Parses given url.]
      * @param {String} string [The provided url.]
-     * @return {Object}        [The url_object containing the url parts.]
+     * @return {Object}        [The url_object containing the URL parts.]
      */
     function parse_url(string) {
-        // setup url object
+        // setup url_object
         var url = url_object(string);
-        var algorithm = ["is_empty", "add_traling_slash", "illegal_chars", "get_tlds", "validate_tld", "split_url", "work_left", "work_right", "set_hostname", "final_check"];
+        var algorithm = ["is_empty", "add_traling_slash", "illegal_chars", "get_tlds", "validate_tld", "split_url", "work_left", "work_right", "set_hostname", "remove_traling_slash", "final_check"];
         // loop through all parsing steps
         for (var i = 0, l = algorithm.length; i < l; i++) {
-            // if url is invalid stop function execution
+            // if URL is invalid stop function execution
             if (url.error) break;
             steps[algorithm[i]](url);
         }
