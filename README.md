@@ -1,4 +1,4 @@
-# url_parser
+# url-parser
 An experimental JavaScript URL parser.
 
 ### What it does?
