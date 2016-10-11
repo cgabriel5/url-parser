@@ -2,11 +2,11 @@
 
 An experimental JavaScript URL parser.
 
-### What It Does?
+### What It Does
 
 Parses a properly formated URL string to extract its scheme, authority (username & password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.
 
-### What It Does Not Do.
+### What It Does Not Do
 
 Does not parse URLs in the form of an IP address.
 
