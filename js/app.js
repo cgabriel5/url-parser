@@ -9,7 +9,7 @@ document.onreadystatechange = function() {
         // cache original URL for later use
         var original_url = url_object.url_untouched;
         // names of keys to remove
-        var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "url_untouched"];
+        var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "url_untouched", "tslash"];
         for (var i = 0, l = keys.length; i < l; i++) delete url_object[keys[i]];
         // reset URL to the ogirinally provided URL
         url_object.url = original_url;
@@ -50,7 +50,7 @@ document.onreadystatechange = function() {
         return {
             "error": false,
             "auth": null,
-            "top_domain": false,
+            "top": false,
             "url_untouched": url,
             "url": url,
             "scheme": null,
@@ -58,6 +58,7 @@ document.onreadystatechange = function() {
             "password": null,
             "subdomains": [],
             "domain": null,
+            "mdomain": null,
             "tld": null,
             "hostname": null,
             "port": null,
@@ -121,12 +122,13 @@ document.onreadystatechange = function() {
                     var tld_match = tld_matches[i].replace(/^[\:\/\/|\.|@]+|\:$/g, ""),
                         tld_match_parts = tld_match.split("."),
                         ll = tld_match_parts.length;
+                    // **Check needs to be revised for urls like => google.com and http://localhost/ **
                     // matches must have at least 2 levels
-                    if (ll <= 1) {
-                        // only allow 1 TLD present if it is localhost
-                        // anything else is not allowed
-                        if (tld_match !== "localhost/") continue;
-                    }
+                    // if (ll <= 1) {
+                    //     // only allow 1 TLD present if it is localhost
+                    //     // anything else is not allowed
+                    //     if (tld_match !== "localhost/") continue;
+                    // }
                     // now check that there are no empty levels. (i.e. google..com, multiple periods)
                     for (var j = 0; j < ll; j++) {
                         if (tld_match_parts[j] === "") {
@@ -176,7 +178,7 @@ document.onreadystatechange = function() {
                             // loop through all others
                             if (all_tlds[level].indexOf(tld) !== -1) {
                                 // check if domain is a top 10,000 domain
-                                if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
+                                if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top = true;
                                 // add TLD to url_object
                                 url_object.tld = tld;
                                 url_object.cleaned_tld = tld_matches[i];
@@ -197,7 +199,7 @@ document.onreadystatechange = function() {
                             }
                             if (with_slds[tld].indexOf(sld) !== -1) { // SLD is allowed
                                 // check if domain is in top 10,000 domains
-                                if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top_domain = true;
+                                if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top = true;
                                 // add the SLD to the TLD
                                 url_object.tld = sld + "." + tld;
                                 url_object.cleaned_tld = tld_matches[i];
@@ -255,8 +257,10 @@ document.onreadystatechange = function() {
             if (!domain) return error(url_object, "no_domain");
             // else... remove the domain from the left
             url_object.left = (url_object.left.replace(domain, ""));
-            // add domain to object
+            // add domain to url_object
             url_object.domain = domain;
+            // add main domain to url_object
+            url_object.mdomain = domain + (url_object.tld === "localhost" ? "" : ("." + url_object.tld));
             // (§) GET AUTH
             var auth_index = url_object.left.indexOf("@");
             if (auth_index !== -1) {
