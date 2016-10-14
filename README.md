@@ -2,14 +2,25 @@
 
 An experimental JavaScript URL parser.
 
+##### Table of Contents
+
+[What It Does](#what-it-does)  
+[What It Does Not Do](#what-it-does-not-do)  
+[Access Parser](#access-parser)  
+[Examples](#examples)  
+[License](#license)  
+
+<a name="what-it-does"></a>
 ### What It Does
 
 Parses a properly formated URL string to extract its scheme, authority (username & password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.
 
+<a name="what-it-does-not-do"></a>
 ### What It Does Not Do
 
 Does not parse URLs in the form of an IP address.
 
+<a name="access-parser"></a>
 ### Access Parser
 
 ```js
@@ -18,6 +29,7 @@ var parse_URL = window.parse_url;
 var parse_URL = parse_url;
 ```
 
+<a name="examples"></a>
 ### Examples
 
 ```js
@@ -132,6 +144,7 @@ parse_URL("google.com");
 }
 ```
 
+<a name="license"></a>
 ### License
 
 This project uses the [MIT License](https://github.com/cgabriel5/url-parser/blob/master/LICENSE.txt).
