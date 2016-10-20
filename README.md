@@ -8,6 +8,7 @@ An experimental JavaScript URL parser.
 [What It Does Not Do](#what-it-does-not-do)  
 [Access Parser](#access-parser)  
 [Examples](#examples)  
+[Contributing](#contributing)  
 [License](#license)  
 
 <a name="what-it-does"></a>
@@ -143,6 +144,13 @@ parse_URL("google.com");
     "fragment":null
 }
 ```
+
+<a name="contributing"></a>
+### Contributing
+
+Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)
+
+See how to contribute [here](https://github.com/cgabriel5/url-parser/blob/master/CONTRIBUTING.md).
 
 <a name="license"></a>
 ### License
