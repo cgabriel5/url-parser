@@ -6,8 +6,9 @@ An experimental JavaScript URL parser.
 
 [What It Does](#what-it-does)  
 [What It Does Not Do](#what-it-does-not-do)  
-[Access Parser](#access-parser)  
-[Examples](#examples)  
+[Add To Project](#add-to-project)  
+[Access Library](#access-library)  
+[Usage](#usage)  
 [Contributing](#contributing)  
 [License](#license)  
 
@@ -21,20 +22,25 @@ Parses a properly formated URL string to extract its scheme, authority (username
 
 Does not parse URLs in the form of an IP address.
 
-<a name="access-parser"></a>
-### Access Parser
+<a name="add-to-project"></a>
+### Add To Project
 
-```js
-var parse_URL = window.parse_url;
-// or
-var parse_URL = parse_url;
+```html
+<script src="my_js_directory_path/urlparser.js"></script>
 ```
 
-<a name="examples"></a>
-### Examples
+<a name="access-library"></a>
+### Access Library
 
 ```js
-parse_URL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
+var parseURL = window.app.libs.parseURL;
+```
+
+<a name="usage"></a>
+### Usage
+
+```js
+parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
 // output
 {
     "error": false,
@@ -56,14 +62,14 @@ parse_URL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
     "fragment":null
 }
 
-parse_URL("https://youtu.be/1xo3af_6_Jk");
+parseURL("https://youtu.be/1xo3af_6_Jk");
 // output
 {
     "error": false,
     "auth": null,
     "top": false,
-    "url":"https://youtu.be/1xo3af_6_Jk"
-    ,"scheme": "https",
+    "url":"https://youtu.be/1xo3af_6_Jk",
+    "scheme": "https",
     "username": null,
     "password": null,
     "subdomains": [],
@@ -78,7 +84,7 @@ parse_URL("https://youtu.be/1xo3af_6_Jk");
     "fragment":null
 }
 
-parse_URL("https://www.google.com/");
+parseURL("https://www.google.com/");
 // output
 {
     "error": false,
@@ -100,47 +106,47 @@ parse_URL("https://www.google.com/");
     "fragment":null
 }
 
-parse_URL("https://google.com/");
+parseURL("https://google.com/");
 // output
 {
-    "error":  false,
-    "auth":  null,
-    "top":  true,
-    "url":  "https://google.com/",
-    "scheme":  "https",
-    "username":  null,
-    "password":  null,
-    "subdomains":  [],
-    "domain":  "google",
-    "mdomain":  "google.com",
-    "tld":  "com",
-    "hostname":  "google.com",
-    "port":  null,
-    "path":  "/",
-    "query":  null,
-    "parameters":  {},
+    "error": false,
+    "auth": null,
+    "top": true,
+    "url": "https://google.com/",
+    "scheme": "https",
+    "username": null,
+    "password": null,
+    "subdomains": [],
+    "domain": "google",
+    "mdomain": "google.com",
+    "tld": "com",
+    "hostname": "google.com",
+    "port": null,
+    "path": "/",
+    "query": null,
+    "parameters": {},
     "fragment":null
 }
 
-parse_URL("google.com");
+parseURL("google.com");
 // output
 {
-    "error":  false,
-    "auth":  null,
-    "top":  false,
-    "url":  "google.com",
-    "scheme":  null,
-    "username":  null,
-    "password":  null,
-    "subdomains":  [],
-    "domain":  "google",
-    "mdomain":  "google.com",
-    "tld":  "com",
-    "hostname":  "google.com",
-    "port":  null,
-    "path":  "",
-    "query":  null,
-    "parameters":  {},
+    "error": false,
+    "auth": null,
+    "top": false,
+    "url": "google.com",
+    "scheme": null,
+    "username": null,
+    "password": null,
+    "subdomains": [],
+    "domain": "google",
+    "mdomain": "google.com",
+    "tld": "com",
+    "hostname": "google.com",
+    "port": null,
+    "path": "",
+    "query": null,
+    "parameters": {},
     "fragment":null
 }
 ```
