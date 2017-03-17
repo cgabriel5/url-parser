@@ -125,6 +125,41 @@ document.onreadystatechange = function() {
         //     "fragment":null
         // }
 
+        // small URL test
+        var urls = [
+            "https://enochs.mcs4kids.com/",
+            "https://www.google.co.uk/?gws_rd=ssl#q=youtube",
+            "https://data.gov.uk/",
+            "https://www.gov.uk/",
+            "https://google.com/",
+            "@google.com:9090/",
+            "http://xn--fsqu00a.xn--3lr804guic/",
+            "http://例子.卷筒纸",
+            "https://support.microsoft.com/en-us/kb/909264",
+            "https://www.google.com/search?biw=1920&bih=990&q=allowed+characters+in+server+username&oq=allowed+characters+in+server+username&gs_l=serp.3...6622.7071.0.7972.4.4.0.0.0.0.115.367.3j1.4.0....0...1c.1.64.serp..0.1.84...33i21k1.bwu3EftBYdY#the-fragment",
+            "https://www.google.com/search?q=hillary+clinton&oq=hillary+clinton;aqs=chrome..69i57j69i61l3.3328j0j4;sourceid=chrome;ie=UTF-8",
+            "https://publicsuffix.org/list/public_suffix_list.dat?t=",
+            "http://example.com/index.html#:words:some-context-for-a-(search-term)",
+            "http://serverfault.com:443/questions/371907/can-you-pass-user-pass-for-http-basic-authentication-in-url-parameters",
+            "drive.google.co.uk:9090/",
+            "https://gma.yahoo.com/government-steps-judge-denies-tribes-request-stop-pipeline-211215145--abc-news-topstories.html",
+            ".com:9090/",
+            "facebook.com:7070/",
+            "http://@www.subdomain.2-twitch.com.ac:8080/引き割り.html",
+            ">https://www.google.com",
+            "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dcomputers&field-keywords=hdmi+splitter",
+            "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec",
+            "https://www./s/ref=nb_sb_noss_2?url=search-alias%3Dcomputers&field-keywords=hdmi+splitter"
+        ];
+
+        // loop over test URLs
+        for (var i = 0, l = urls.length; i < l; i++) {
+            // cache test + suppress errors
+            var test = parseURL(urls[i], true);
+            // log test information (test status, test url, test error)
+            console.log((!test.error ? "✔" : "✘"), test.url, test.error);
+        }
+
     }
 
 };
