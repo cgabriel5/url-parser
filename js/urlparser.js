@@ -52,11 +52,12 @@
             "no_sld_provided": "URL does not contain a SLD.",
             "cc_sld_mismatch": "URL ccTLD matchup is invalid.",
             "tld_validation_failed": "URL does not contain a valid TLD.",
-            "non_cc_tld_valitation_fail": "URLs TLD is a non-ccTLD and failed non-ccTLD validation; TLD seems to not exist.",
+            "non_cc_tld_valitation_fail": "URLs TLD is a non-ccTLD and failed non-ccTLD validation. TLD seems to not exist.",
             "no_valid_tld": "No valid TLD found.",
             "no_scheme": "No valid scheme.",
             "no_domain": "No domain.",
-            "invalid_sudomain": "URL contains an wrongly formated subdomain."
+            "invalid_sudomain": "URL contains an wrongly formated subdomain.",
+            "unidentified_error": "Parser failed to parse string. Error suppressed via try/catch."
         };
         /**
          * @description [Create error message and adds it to url_object.]
@@ -203,16 +204,18 @@
                             // TLD (right most part) is anything but a country code
                             // cycle through the all TLDs anc check if tls exists
                             for (var level in all_tlds) {
-                                // *ignore the country codes
-                                if (all_tlds[level] === "country_code") continue;
-                                // loop through all others
-                                if (all_tlds[level].indexOf(tld) !== -1) {
-                                    // check if domain is a top 10,000 domain
-                                    if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top = true;
-                                    // add TLD to url_object
-                                    url_object.tld = tld;
-                                    url_object.cleaned_tld = tld_matches[i];
-                                    return;
+                                if (all_tlds.hasOwnProperty(level)) {
+                                    // *ignore the country codes
+                                    if (all_tlds[level] === "country_code") continue;
+                                    // loop through all others
+                                    if (all_tlds[level].indexOf(tld) !== -1) {
+                                        // check if domain is a top 10,000 domain
+                                        if (top_domains.indexOf(tld_parts[j + 1] + "." + tld) !== -1) url_object.top = true;
+                                        // add TLD to url_object
+                                        url_object.tld = tld;
+                                        url_object.cleaned_tld = tld_matches[i];
+                                        return;
+                                    }
                                 }
                             }
                             // for non countryTLD the TLD must be the part at the very right
@@ -295,7 +298,12 @@
                 var auth_index = url_object.left.indexOf("@");
                 if (auth_index !== -1) {
                     // remove the auth from the left into its own property
-                    url_object.auth = (url_object.left.substring(0, auth_index) || null);
+                    // **Note: changed null => "" to prevent errors as the colon_index check will
+                    // return an error as the indexOf is run on null. For future knowledge when an
+                    // empty string ("") is defaulted this means that an atsign (@) was detected but
+                    // there was no username or password to provided. Should this be left to default
+                    // an empty string ("") or null? :3
+                    url_object.auth = (url_object.left.substring(0, auth_index) || ""); // || null);
                     // reset the left
                     url_object.left = url_object.left.substring(auth_index, url_object.left.length - 1);
                     // parse auth
@@ -307,8 +315,15 @@
                         url_object.username = (auth_parts[0] || null);
                         url_object.password = (auth_parts[1] || null);
                     } else {
-                        // only username or nothing
-                        if (auth !== "") url_object.username = auth;
+                        // **Note: This reset is done due to the above note.
+                        // reset to null if the auth is an empty string ("")
+                        if (url_object.auth === "") {
+                            url_object.auth = null;
+                            url_object.username = null;
+                        } else {
+                            // only username or nothing
+                            if (auth !== "") url_object.username = auth;
+                        }
                     }
                 }
                 // remove the @ sign
@@ -409,7 +424,33 @@
          * @param {String} string [The provided url.]
          * @return {Object}        [The url_object containing the URL parts.]
          */
-        function main(string) {
+        function main(string, suppress_errors) {
+            // don't hide errors
+            if (!suppress_errors) {
+                return parser(string);
+            } else { // hide any error; just return the string
+                try {
+                    return parser(string);
+                } catch (e) {
+                    // create the url object
+                    var url = url_object(string);
+                    // just set the url to later access
+                    url.url = string;
+                    // set the error message
+                    error(url, "unidentified_error");
+                    // cleanup the url object before returning
+                    cleanup(url);
+                    // return the url object
+                    return url;
+                }
+            }
+        }
+        /**
+         * @description [Parse the possible URL string into its anatomic parts.]
+         * @param  {String} string [The string to parse.]
+         * @return {Object}        [On object containing the URLs parts and any other information.]
+         */
+        function parser(string) {
             // setup url_object
             var url = url_object(string);
             var algorithm = ["is_empty", "add_traling_slash", "illegal_chars", "get_tlds", "validate_tld", "split_url", "work_left", "work_right", "set_hostname", "remove_traling_slash", "final_check"];
