@@ -420,8 +420,9 @@
             "final_check": function() {}
         };
         /**
-         * @description [Parses given url.]
+         * @description [The main app function. Invokes the parser function w/o errors.]
          * @param {String} string [The provided url.]
+         * @param {Boolean} suppress_errors [Flag indicating whether parser errors should be suppressed.]
          * @return {Object}        [The url_object containing the URL parts.]
          */
         function main(string, suppress_errors) {
