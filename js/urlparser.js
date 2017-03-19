@@ -37,7 +37,7 @@
             // names of keys to remove
             var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "url_untouched", "tslash"];
             for (var i = 0, l = keys.length; i < l; i++) delete url_object[keys[i]];
-            // reset URL to the ogirinally provided URL
+            // reset URL to the originally provided URL
             url_object.url = original_url;
         }
         /**
@@ -119,7 +119,7 @@
                 if (url_object.url.length <= 3) error(url_object, "min_length");
             },
             /**
-             * @description [Add trailing slash to URL if not originaly there.]
+             * @description [Add trailing slash to URL if not originally there.]
              * @param {Object} url_object [The url_object to work this.]
              */
             "add_traling_slash": function(url_object) {
@@ -204,7 +204,7 @@
                 for (var i = 0, l = tld_matches.length; i < l; i++) {
                     // remove starting dot(.)|:// and ending slash(/)|colon(:)
                     var current_tld = tld_matches[i].replace(/^[\.|\:\/\/]+|[\/|\:]+$/g, "");
-                    // get dot delimeter count
+                    // get dot delimiter count
                     // start with the most right and move left
                     var tld_parts = current_tld.split(".").reverse();
                     for (var j = 0, ll = tld_parts.length; j < ll; j++) {
@@ -230,7 +230,7 @@
                                 }
                             }
                             // for non countryTLD the TLD must be the part at the very right
-                            // therefore if this righmost item does not match anything
+                            // therefore if this right most item does not match anything
                             // the URL is invalid. TLD needs to be in a level.
                             // **Note: This check is only run on the on the last tld match. This
                             // is done as it is the final match to check and because it reached
