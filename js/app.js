@@ -149,7 +149,21 @@ document.onreadystatechange = function() {
             ">https://www.google.com",
             "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Dcomputers&field-keywords=hdmi+splitter",
             "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec",
-            "https://www./s/ref=nb_sb_noss_2?url=search-alias%3Dcomputers&field-keywords=hdmi+splitter"
+            "https://www./s/ref=nb_sb_noss_2?url=search-alias%3Dcomputers&field-keywords=hdmi+splitter",
+            // // ------------------
+            "http://localhost/projects/url-parser/parser/index.html",
+            "http://something:password@www.subdomain.google.com/",
+            "something:password@www.subdomain.google.com/",
+            "http://sub.localhost/projects/url-parser/parser/index.html",
+            "sub.localhost/projects/url-parser/parser/index.html",
+            "localhost/projects/url-parser/parser/index.html",
+            "www.localhost/projects/url-parser/parser/index.html",
+            "http://www.google.com",
+            "http://google.com",
+            "www.google.com",
+            "www.google",
+            "google.com",
+            "www.localhost"
         ];
 
         // loop over test URLs
@@ -157,7 +171,7 @@ document.onreadystatechange = function() {
             // cache test + suppress errors
             var test = parseURL(urls[i], true);
             // log test information (test status, test url, test error)
-            console.log((!test.error ? "✔" : "✘"), test.url, test.error);
+            console.log((!test.error ? "✔" : "✘"), test.url, (test.error ? test.error : true));
         }
 
     }
