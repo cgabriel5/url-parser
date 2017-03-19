@@ -46,6 +46,7 @@
          */
         var errors = {
             "empty_string": "URL string cannot be empty.",
+            "min_length": "String does not meet the minimum length to continue parser. Needs to be >= 4 characters.",
             "illegal_chars": "URL cannot contain: backticks (`), empty spaces, backslashes (\\), and less than (<) or greater signs (>).",
             "no_possible_tlds": "URL does not contain possible TLDs.",
             "no_cleaned_tlds": "URL does not contain any TLDs.",
@@ -75,6 +76,7 @@
          */
         function url_object(url) {
             return {
+                "source": url,
                 "error": false,
                 "auth": null,
                 "top": false,
@@ -106,6 +108,15 @@
              */
             "is_empty": function(url_object) {
                 if (url_object.url === "") error(url_object, "empty_string");
+            },
+            /**
+             * @description [Determines whether provided URL string meets the min length.]
+             * @param {Object} url_object [The url_object to work with.]
+             */
+            "min_length": function(url_object) {
+                // [minimum length](http://www.nic.ag/rules.htm)
+                // string length must be at least 4 characters long
+                if (url_object.url.length <= 3) error(url_object, "min_length");
             },
             /**
              * @description [Add trailing slash to URL if not originaly there.]
@@ -461,7 +472,7 @@
         function parser(string) {
             // setup url_object
             var url = url_object(string);
-            var algorithm = ["is_empty", "add_traling_slash", "illegal_chars", "get_tlds", "validate_tld", "split_url", "work_left", "work_right", "set_hostname", "remove_traling_slash", "final_check"];
+            var algorithm = ["is_empty", "min_length", "add_traling_slash", "illegal_chars", "get_tlds", "validate_tld", "split_url", "work_left", "work_right", "set_hostname", "remove_traling_slash", "final_check"];
             // loop through all parsing steps
             for (var i = 0, l = algorithm.length; i < l; i++) {
                 // if URL is invalid stop function execution
