@@ -143,7 +143,7 @@
                 // characters to escape: . \ + * ? [ ^ ] $ ( ) { } = ! < > | : -
                 // (source)[http://stackoverflow.com/questions/5105143/list-of-all-characters-that-should-be-escaped-before-put-in-to-regex]
                 // get the TLD matches
-                var tld_matches = (url_object.url.match(/(\.|\:\/\/|@)([^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\/\?])+[\/|:\/]/gi) || []);
+                var tld_matches = (url_object.url.match(/(\.|\:\/\/|@|)([^~`\!@#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'"<\>,\/\?])+[\/|:\/]/gi) || []);
                 // if no TLD matches...set error
                 if (!tld_matches.length) return error(url_object, "no_possible_tlds");
                 // check matches
@@ -221,7 +221,14 @@
                             // for non countryTLD the TLD must be the part at the very right
                             // therefore if this righmost item does not match anything
                             // the URL is invalid. TLD needs to be in a level.
-                            return error(url_object, "non_cc_tld_valitation_fail");
+                            // **Note: This check is only run on the on the last tld match. This
+                            // is done as it is the final match to check and because it reached
+                            // this point all the tld matches failed. Thus, the source contained
+                            // no valid tlds.
+                            if (i === (l - 1)) {
+                                // no country code tld passed the check. :/
+                                return error(url_object, "non_cc_tld_valitation_fail");
+                            }
                         } else { // is a country code
                             // check if TLD has any slds
                             if (without_slds.indexOf(tld) === -1) { // TLD has allowed slds
