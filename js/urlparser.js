@@ -32,13 +32,11 @@
          * @param {Object} url_object [The url_object to work with.]
          */
         function cleanup(url_object) {
-            // cache original URL for later use
-            var original_url = url_object.url_untouched;
             // names of keys to remove
-            var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "url_untouched", "tslash"];
+            var keys = ["length", "tld_index_start", "tld_index_end", "tld_matches", "cleaned_tld", "left", "right", "tslash"];
             for (var i = 0, l = keys.length; i < l; i++) delete url_object[keys[i]];
             // reset URL to the originally provided URL
-            url_object.url = original_url;
+            url_object.url = url_object.source;
         }
         /**
          * @description [Parsing error messages.]
@@ -80,8 +78,8 @@
                 "error": false,
                 "auth": null,
                 "top": false,
-                "url_untouched": url,
-                "url": url,
+                // **Note: To avoid latter case-sensitive issues the URL is lowercased.
+                "url": url.toLowerCase(),
                 "scheme": null,
                 "username": null,
                 "password": null,
@@ -123,7 +121,7 @@
              * @param {Object} url_object [The url_object to work this.]
              */
             "add_traling_slash": function(url_object) {
-                var untouched_url = url_object.url_untouched;
+                var untouched_url = url_object.source;
                 // has trailing slash?
                 var has_trailing_slash = (untouched_url.charAt(untouched_url.length - 1) === "/");
                 // add traling slash or missing
