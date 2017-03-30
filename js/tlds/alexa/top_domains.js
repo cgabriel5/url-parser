@@ -33,7 +33,7 @@ document.onreadystatechange = function() {
         // download the zip file and place into directory
         // github top DNS domains [https://github.com/opendns/public-domain-lists/blob/master/opendns-top-domains.txt]
         // append timestamp to url to bypass cache
-        xhr.open("GET", "http://localhost/projects/url_parser/parser/js/tlds/alexa/top_1m_domains.csv?t=" + ((new Date()).getTime()));
+        xhr.open("GET", "http://localhost/projects/url-parser/parser/js/tlds/alexa/top_1m_domains.csv?t=" + ((new Date()).getTime()));
         xhr.send(null);
     }
 };
