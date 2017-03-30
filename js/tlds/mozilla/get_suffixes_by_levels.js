@@ -92,7 +92,7 @@ document.onreadystatechange = function() {
         var xhr = new XMLHttpRequest();
         xhr.addEventListener("load", get_suffixes);
         // append timestamp to url to bypass cache
-        xhr.open("GET", "js/tlds/mozilla/source/list.txt?t=" + ((new Date()).getTime()));
+        xhr.open("GET", "js/tlds/mozilla/list.txt?t=" + ((new Date()).getTime()));
         xhr.send(null);
     }
 };
