@@ -281,8 +281,9 @@ document.onreadystatechange = function() {
             "http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com",
             "http://1337.net",
             "http://a.b-c.de",
-            "http://223.255.255.254",
+            "reactionhttp://i.imgur.com/uIzTq4k.jpg",
             // urls with errors
+            "http://223.255.255.254",
             "<img src='http://dummyimage.com/50'>",
             "http://example.com/index.html#!s3!search terms",
             "http://142.42.1.1/",
