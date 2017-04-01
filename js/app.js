@@ -10,123 +10,124 @@ document.onreadystatechange = function() {
             // get the library
             parseURL = window.app.libs.parseURL;
 
-        test = parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
-        console.log(test);
-        // output
-        // {
-        //     "error": false,
-        //     "auth": null,
-        //     "top": true,
-        //     "url": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
-        //     "scheme": "https",
-        //     "username": null,
-        //     "password": null,
-        //     "subdomains": ["www"],
-        //     "domain": "youtube",
-        //     "mdomain": "youtube.com",
-        //     "tld": "com",
-        //     "hostname": "www.youtube.com",
-        //     "port": null,
-        //     "path": "/watch",
-        //     "query": "?v=Gj2nOk8af-o",
-        //     "parameters": {"v":"Gj2nOk8af-o"},
-        //     "fragment":null
-        // }
+        // test = parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
+        // console.log(test);
+        // // output
+        // // {
+        // //     "error": false,
+        // //     "auth": null,
+        // //     "top": true,
+        // //     "url": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
+        // //     "scheme": "https",
+        // //     "username": null,
+        // //     "password": null,
+        // //     "subdomains": ["www"],
+        // //     "domain": "youtube",
+        // //     "mdomain": "youtube.com",
+        // //     "tld": "com",
+        // //     "hostname": "www.youtube.com",
+        // //     "port": null,
+        // //     "path": "/watch",
+        // //     "query": "?v=Gj2nOk8af-o",
+        // //     "parameters": {"v":"Gj2nOk8af-o"},
+        // //     "fragment":null
+        // // }
 
-        test = parseURL("https://youtu.be/1xo3af_6_Jk");
-        console.log(test);
-        // output
-        // {
-        //     "error": false,
-        //     "auth": null,
-        //     "top": false,
-        //     "url":"https://youtu.be/1xo3af_6_Jk",
-        //     "scheme": "https",
-        //     "username": null,
-        //     "password": null,
-        //     "subdomains": [],
-        //     "domain": "youtu",
-        //     "mdomain": "youtu.be",
-        //     "tld": "be",
-        //     "hostname": "youtu.be",
-        //     "port": null,
-        //     "path": "/1xo3af_6_Jk",
-        //     "query": null,
-        //     "parameters": {},
-        //     "fragment":null
-        // }
+        // test = parseURL("https://youtu.be/1xo3af_6_Jk");
+        // console.log(test);
+        // // output
+        // // {
+        // //     "error": false,
+        // //     "auth": null,
+        // //     "top": false,
+        // //     "url":"https://youtu.be/1xo3af_6_Jk",
+        // //     "scheme": "https",
+        // //     "username": null,
+        // //     "password": null,
+        // //     "subdomains": [],
+        // //     "domain": "youtu",
+        // //     "mdomain": "youtu.be",
+        // //     "tld": "be",
+        // //     "hostname": "youtu.be",
+        // //     "port": null,
+        // //     "path": "/1xo3af_6_Jk",
+        // //     "query": null,
+        // //     "parameters": {},
+        // //     "fragment":null
+        // // }
 
-        test = parseURL("https://www.google.com/");
-        console.log(test);
-        // output
-        // {
-        //     "error": false,
-        //     "auth": null,
-        //     "top": true,
-        //     "url": "https://www.google.com/",
-        //     "scheme": "https",
-        //     "username": null,
-        //     "password": null,
-        //     "subdomains": ["www"],
-        //     "domain": "google",
-        //     "mdomain": "google.com",
-        //     "tld": "com",
-        //     "hostname": "www.google.com",
-        //     "port": null,
-        //     "path": "/",
-        //     "query": null,
-        //     "parameters": {},
-        //     "fragment":null
-        // }
+        // test = parseURL("https://www.google.com/");
+        // console.log(test);
+        // // output
+        // // {
+        // //     "error": false,
+        // //     "auth": null,
+        // //     "top": true,
+        // //     "url": "https://www.google.com/",
+        // //     "scheme": "https",
+        // //     "username": null,
+        // //     "password": null,
+        // //     "subdomains": ["www"],
+        // //     "domain": "google",
+        // //     "mdomain": "google.com",
+        // //     "tld": "com",
+        // //     "hostname": "www.google.com",
+        // //     "port": null,
+        // //     "path": "/",
+        // //     "query": null,
+        // //     "parameters": {},
+        // //     "fragment":null
+        // // }
 
-        test = parseURL("https://google.com/");
-        console.log(test);
-        // output
-        // {
-        //     "error": false,
-        //     "auth": null,
-        //     "top": true,
-        //     "url": "https://google.com/",
-        //     "scheme": "https",
-        //     "username": null,
-        //     "password": null,
-        //     "subdomains": [],
-        //     "domain": "google",
-        //     "mdomain": "google.com",
-        //     "tld": "com",
-        //     "hostname": "google.com",
-        //     "port": null,
-        //     "path": "/",
-        //     "query": null,
-        //     "parameters": {},
-        //     "fragment":null
-        // }
+        // test = parseURL("https://google.com/");
+        // console.log(test);
+        // // output
+        // // {
+        // //     "error": false,
+        // //     "auth": null,
+        // //     "top": true,
+        // //     "url": "https://google.com/",
+        // //     "scheme": "https",
+        // //     "username": null,
+        // //     "password": null,
+        // //     "subdomains": [],
+        // //     "domain": "google",
+        // //     "mdomain": "google.com",
+        // //     "tld": "com",
+        // //     "hostname": "google.com",
+        // //     "port": null,
+        // //     "path": "/",
+        // //     "query": null,
+        // //     "parameters": {},
+        // //     "fragment":null
+        // // }
 
-        test = parseURL("google.com");
-        console.log(test);
-        // output
-        // {
-        //     "error": false,
-        //     "auth": null,
-        //     "top": false,
-        //     "url": "google.com",
-        //     "scheme": null,
-        //     "username": null,
-        //     "password": null,
-        //     "subdomains": [],
-        //     "domain": "google",
-        //     "mdomain": "google.com",
-        //     "tld": "com",
-        //     "hostname": "google.com",
-        //     "port": null,
-        //     "path": "",
-        //     "query": null,
-        //     "parameters": {},
-        //     "fragment":null
-        // }
+        // test = parseURL("google.com");
+        // console.log(test);
+        // // output
+        // // {
+        // //     "error": false,
+        // //     "auth": null,
+        // //     "top": false,
+        // //     "url": "google.com",
+        // //     "scheme": null,
+        // //     "username": null,
+        // //     "password": null,
+        // //     "subdomains": [],
+        // //     "domain": "google",
+        // //     "mdomain": "google.com",
+        // //     "tld": "com",
+        // //     "hostname": "google.com",
+        // //     "port": null,
+        // //     "path": "",
+        // //     "query": null,
+        // //     "parameters": {},
+        // //     "fragment":null
+        // // }
 
         // random test strings
         var pool = [
+
             "http://username:password@www@subdomain.example.卷筒纸.com",
             "http://username:password@www.subdomain.example.卷筒纸.com",
             "http://username:password@www.subdomain.example.卷筒纸.com",
@@ -205,7 +206,6 @@ document.onreadystatechange = function() {
             "(&(*&(*(www.google.com\")(*()*DS",
             "www.google.com",
             "(en.c.org/a_(x)_(y))",
-            "aspasao)(asa^&%@(en.c.org/a_(x)_(y))",
             "http://🐌🍏⌚✨😐😍🐸🍑.🍕💩.ws",
             "https://ka.wikipedia.org/wiki/მთავარი_გვერდი",
             "http://example.com/foo.mp4#t=10,20",
@@ -258,6 +258,11 @@ document.onreadystatechange = function() {
             "http://www.example.com/wpstyle/?p=364",
             "https://www.example.com/foo/?bar=baz&inga=42&quux",
             "http://✪df.ws/123",
+            "http://✪df.ws:9000/123",
+            "http://✪df.ws:9000/",
+            "http://✪df.ws:9000",
+            "http://✪df.ws:9000*repeat",
+            "http://✪df.ws*",
             "http://userid:password@example.com:8080",
             "http://userid:password@example.com:8080/",
             "http://userid@example.com",
@@ -278,10 +283,13 @@ document.onreadystatechange = function() {
             "http://j.mp",
             "ftp://foo.bar/baz",
             "http://foo.bar/?q=Test%20URL-encoded%20stuff",
-            "http://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com",
+            "ahttp://-.~_!$&'()*+,;=:%40:80%2f::::::@example.com",
+            "-.~_!$&'()*+,;=:%40:80%2f::::::@example.com",
             "http://1337.net",
             "http://a.b-c.de",
             "reactionhttp://i.imgur.com/uIzTq4k.jpg",
+            "https://gfycat.com/AcclaimedSparklingAmberpenshell",
+            "file:///home/name/Desktop/maxresdefault.jpg",
             // urls with errors
             "http://223.255.255.254",
             "<img src='http://dummyimage.com/50'>",
@@ -303,7 +311,9 @@ document.onreadystatechange = function() {
             "k12.ak.us",
             "vt.us",
             "ak.us",
+            "aspasao)(asa^&%@(en.c.org/a_(x)_(y))",
             "data:image/png;base64,iVBORw0KGgoAAA==",
+
         ];
 
         // loop over test test pool
@@ -314,8 +324,11 @@ document.onreadystatechange = function() {
             if (!test.error) {
                 var url = test.url;
                 var padding = " ".repeat(test.punct.left.length);
-                console.log("✔ " + padding + "%c" + url, "background: rgba(0, 0, 0, 0.01);color: #1a53ff", [test]);
+                console.log([test]);
+                console.log("✔ " + padding + "%c" + url, "background: rgba(0, 0, 0, 0.01);color: #1a53ff");
                 console.log("✔ %c" + test.source, "background: rgba(0, 0, 0, 0.01);color: #1a8703");
+                // console.log([test], "✔ " + url);
+                // console.log("✔ " + test.source);
                 console.log("");
             } else {
                 console.log("✘ %c[" + test.error.name.toUpperCase() + "]", "background: #ffe6e6; color: red", test.url, [test]);
