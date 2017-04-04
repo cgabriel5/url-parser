@@ -12,9 +12,9 @@
          */
         var constants = {
             // [uri schemes list](https://www.w3.org/wiki/UriSchemes)
-            "schemes": ["https://", "http://",
+            "schemes": ["https://", "http://", "ftps://", "ftp://", "file://", "file:///"
                 // the following schemes are not supported at this time...
-                // "file://", "ftp://", "sftp://", "mysql://",
+                // "sftp://", "mysql://",
                 // "mailto:",
                 // "data:",
                 // /*camera Real Time Streaming scheme*/ "rtsp://",
@@ -58,7 +58,8 @@
             "invalid_domain": "URL contains an wrongly formated domain.",
             "invalid_subdomain": "URL contains an wrongly formated subdomain.",
             "unidentified_error": "Parser failed to parse string. Error suppressed via try/catch.",
-            "unclosded_wrap_character": "There is an unclosded wrap character in right portion of the string."
+            "unclosded_wrap_character": "There is an unclosded wrap character in right portion of the string.",
+            "illegal_chars_scheme": "Illegal characters found to the right of the scheme."
         };
         /**
          * @description [Create error message and adds it to url_object.]
@@ -81,7 +82,7 @@
             return {
                 // =============== miscellaneous
                 "source": url, // original string
-                "error": false, // possible parsing error
+                "error": null, // possible parsing error
                 "top": {
                     // does the main domain contain a top
                     // 10,000 main domain name
@@ -111,7 +112,7 @@
                 // ===============
                 "port": null,
                 // ===============
-                "path": null,
+                "pathname": null,
                 // ===============
                 "query": null,
                 "parameters": {},
@@ -122,6 +123,7 @@
                 "authority": null,
                 // =============== [PARTS END]
                 "url": url, // Final parsed URL
+                "normalized": url, // Normalized URL
                 // =============== File Info
                 "directory": null,
                 "filename": null,
@@ -154,21 +156,36 @@
                 // string length must be at least 4 characters long
                 if (url_object.url.length <= 3) error(url_object, "min_length");
             },
-            /**
-             * @description [Add trailing slash to URL if not originally there.]
-             * @param {Object} url_object [The url_object to work this.]
-             */
-            "add_traling_slash": function(url_object) {
-                var untouched_url = url_object.source;
-                // has trailing slash?
-                var has_trailing_slash = (untouched_url.charAt(untouched_url.length - 1) === "/");
-                // add traling slash or missing
-                url_object.url = untouched_url + (has_trailing_slash ? "" : "/");
-                // add the URL length to the url_object
-                url_object.length = url_object.url.length;
-                // for later use keep record of trailing slash
-                url_object.tslash = has_trailing_slash;
-            },
+            // /**
+            //  * @description [Add trailing slash to URL if not originally there.]
+            //  * @param {Object} url_object [The url_object to work this.]
+            //  */
+            // "add_traling_slash": function(url_object) {
+            //     var untouched_url = url_object.source;
+            //     // has trailing slash?
+            //     var has_trailing_slash = (untouched_url.charAt(untouched_url.length - 1) === "/");
+            //     // add traling slash or missing
+            //     url_object.url = untouched_url + (has_trailing_slash ? "" : "/");
+            //     // add the URL length to the url_object
+            //     url_object.length = url_object.url.length;
+            //     // for later use keep record of trailing slash
+            //     url_object.tslash = has_trailing_slash;
+            // },
+            // /**
+            //  * @description [Removes trailing slash from path if not originally set.]
+            //  * @param {Object} url_object [The url_object to work this.]
+            //  */
+            // "remove_traling_slash": function(url_object) {
+            //     // cache tslash
+            //     var had_trailing_slash = url_object.tslash;
+            //     // check if URL has a fragment ot query
+            //     // no further checking neccessary
+            //     if (url_object.query || url_object.hash) return;
+            //     // if it did not originally have..remove it if there
+            //     if (!had_trailing_slash) url_object.pathname = url_object.pathname.replace(/\/$/, "");
+            //     // else if it did have it we just leave it there...
+            //     // as this is the way the user provided the URL
+            // },
             /**
              * @description [Checks URL for presence of illegal characters. Sets error if so.]
              * @param {Object} url_object [The url_object to work with.]
@@ -180,6 +197,15 @@
                 // if contains illegal chars...set error
                 // if ((new RegExp(/`|"|<|>| /)).test(url_object.url)) error(url_object, "illegal_chars");
                 if ((new RegExp(/\s/)).test(url_object.url)) error(url_object, "illegal_chars");
+            },
+            "normalize_start": function(url_object) {
+
+                // [https://en.wikipedia.org/wiki/URL_normalization]
+
+                // (§) File URLs
+                // [https://en.wikipedia.org/wiki/File_URI_scheme]
+                url_object.url = url_object.url.replace("file:///", "file://localhost/");
+
             },
             /**
              * @description [Gets any possible TLDs.]
@@ -337,41 +363,27 @@
                 // skip this for localhost
                 if (url_object.tld !== "localhost") url_object.left = url_object.left.replace(new RegExp("\." + url_object.tld + "$"), "");
 
-                // check for any illegal characters in the left
-                var lleft = url_object.left,
-                    sep_index = -1;
-                for (var i = lleft.length; i > -1; i--) {
-                    var char = lleft[i];
-                    // :// @ . - are the only allowed characters
-                    if (!(/[^`~\!\#\$%\^&\*\(\)_\+\=\[\]\{\}\|;'",<\>\?]/).test(char)) {
-                        sep_index = i;
-                        // separate the parts
-                        // reset the left and left punct
-                        url_object.punct.left = lleft.substring(0, i + 1) + url_object.punct.left;
-                        url_object.left = lleft.substring(i + 1, lleft.length);
-                        // stop the loop
-                        break;
-                    }
-                }
-
                 // (§) Get The Domains (Main Domain + Subdomains)
                 var lleft = url_object.left;
-
+                var not_allowed = /[^`~\!@\#\$%\^&\*\(\)_\=\+\[\]\{\}\\\|;\:'",<\>\/\?]/;
                 var domains = [];
-                var flag = true;
-                while (flag) {
-                    var regex = (/(\.|\/\/|@|^)([^`~\!@\#\$%\^&\*\(\)_\+\=\[\]\{\}\\\|;\:'",\.<\>\/\?]+)?$/g);
-                    var domain = (lleft.match(regex));
-                    if (domain && domain[0] !== "") {
-                        domain = domain[0];
-                        // reset the left
-                        lleft = lleft.substring(0, lleft.length - domain.length);
-                        domains.push(domain);
-                    } else {
-                        // stop the loop
-                        flag = false;
-                    }
+                var chars = lleft.split("");
+                // loop in reverse
+                for (var i = chars.length - 1; i > -1; i--) {
+                    var char = chars[i];
+                    if (not_allowed.test(char)) { // valid domain char
+                        // add to the domains array
+                        domains.push(char);
+                    } else break; // break the loop as an illegal char was hit
                 }
+                // reverse the array
+                domains.reverse();
+                var domain_string = domains.join("");
+                // remove the domain string from the lleft
+                lleft = lleft.replace(new RegExp(domain_string + "$"), "");
+                url_object.left = lleft;
+                domains = domain_string.split(".").reverse();
+
                 // no domain..set error
                 if (!domains.length) return error(url_object, "no_domain");
 
@@ -392,13 +404,7 @@
                     // check for illegal start/end slashes
                     if ((/^\-|\-$/).test(domain)) return error(url_object, "invalid_" + type);
 
-                    // remove the domain from the left
-                    url_object.left = url_object.left.substring(0, url_object.left.length - domain.length);
-
-                    //remove any special chars
-                    var domain_ = domain.replace(/\/\/|@|\./, "");
-
-                    if (domain_ === "") {
+                    if (domain === "") {
                         // if there is an empty domain like http://username:password@www.@subdomain.example.卷筒纸.com (@www.@domain)
                         // this empty dot is an empty (sub)domain and an error is thrown
                         return error(url_object, "empty_" + type);
@@ -406,94 +412,125 @@
 
                     // first domain is the main domain
                     if (i === 0) {
-                        url_object.domain = domain_;
+                        url_object.domain = domain;
                         // add main domain to url_object
-                        url_object.mdomain = domain_ + (url_object.tld === "localhost" ? "" : ("." + url_object.tld));
+                        url_object.mdomain = domain + (url_object.tld === "localhost" ? "" : ("." + url_object.tld));
                         // add the domain to the front of the domains array via unshift
-                    } else url_object.subdomains.unshift(domain_);
-
-                    // check for possible atsign (@) or double-slash (//)
-                    if ((/@/).test(domain) || (/\/\//).test(domain)) {
-
-                        // add the atsign/double-slash back to the left
-                        url_object.left = url_object.left + ((/@/).test(domain) ? "@" : "//");
-
-                        // stop the loop at this point...as there could only be one
-                        // atsign (@) which denotes authority is being used in the url
-                        break;
-
-                    }
+                    } else url_object.subdomains.unshift(domain);
 
                 }
                 // stringify the domains
                 url_object.subdomains = url_object.subdomains.join(".");
 
-                // (§) Get The Scheme
-                var regex = (/([^`~\!@\#\$%\^&\*\(\)_\-\+\=\[\]\{\}\\\|;\:'",\.<\>\/\?]+)\:\/\/|data\:\//);
-                var match = (url_object.left.match(regex) || ["", ""]),
-                    scheme = match[0],
-                    scheme_ = match[1],
-                    scheme_index = (match.index !== undefined) ? match.index : -1;
-                if (-~scheme_index) {
-                    // check the scheme for a truly valid scheme
-                    if (-~constants.schemes.indexOf(scheme.toLowerCase())) { // clean scheme like "http://"
-                        // add the scheme/protocol to the url_object
-                        url_object.protocol = scheme_;
-                        url_object.scheme = scheme;
-                        // reset the
-                        var punct = url_object.left.substring(0, scheme_index);
-                        // add the puncto the current left punct
-                        url_object.punct.left = punct + url_object.punct.left;
-                        // reset the left
-                        url_object.left = url_object.left.substring(scheme_index + scheme.length, url_object.left.length);
-                    } else { // possible dirty scheme ")(*(@8928http://"
-                        // check for part of the scheme
-                        // i.e. )(*(@8928http:// => 8928http://
-                        // in this case we only get the part that matches the valid scheme
-                        for (var i = 0, l = constants.schemes.length; i < l; i++) {
-                            var valid_scheme = constants.schemes[i];
-                            if (-~scheme.indexOf(valid_scheme.toLowerCase())) {
-
-                                var true_scheme_index = scheme.indexOf(valid_scheme);
-                                // var true_index = scheme_index + true_scheme_index;
-
-                                // add the scheme/protocol to the url_object
-                                url_object.protocol = valid_scheme.replace("://", "");
-                                url_object.scheme = valid_scheme;
-
-                                var punct = url_object.left.substring(0, scheme_index) + scheme.substring(0, true_scheme_index);
-                                // add the puncto the current left punct
-                                url_object.punct.left = punct + url_object.punct.left;
-                                // reset the left
-                                url_object.left = url_object.left.substring(scheme_index + scheme.length, url_object.left.length);
-
-                                // found a match...break the loop
-                                break;
-                            }
-                        }
-                    } // no scheme found...no action needed
-                } // no scheme found...no action needed
-
                 // (§) Check For Authority
                 var atsign_index = url_object.left.lastIndexOf("@");
                 if (-~atsign_index) { // auth exists
+                    // the atsign must also be the last character in the left at this point
+                    if (atsign_index !== url_object.left.length - 1) error(url_object, "incorrectly_positioned_@");
                     // remove the at sign
                     url_object.left = url_object.left.replace(/@$/, "");
-                    // the auth string will be the current left string
-                    var auth = url_object.left;
-                    // set the auth
-                    url_object.userinfo = auth;
+                    // get the current left
+                    var lleft = url_object.left;
+                    // check for userinfo (username:password)
                     // get the colon index
-                    var colon_index = auth.indexOf(":");
+                    var scheme_index = lleft.indexOf("://");
+                    var colon_index = lleft.indexOf(":", scheme_index + 1);
+                    // http://username:password@www.google.com/
                     if (-~colon_index) {
-                        // get the username, password
-                        url_object.username = auth.substring(0, colon_index) || null;
-                        url_object.password = auth.substring(colon_index + 1, auth.length) || null;
+                        // get the username:password
+                        url_object.password = (lleft.substring(colon_index + 1, lleft.length) || null);
+                        // remove from the lleft
+                        lleft = lleft.substring(0, colon_index + 1);
+                        url_object.username = lleft.substring((-~scheme_index) ? (scheme_index + 3) : 0, colon_index) || null;
+                        // remove from the lleft
+                        lleft = lleft.substring(0, (-~scheme_index) ? (scheme_index + 3) : 0);
+                        // set the userinfo
+                        url_object.userinfo = (url_object.username || "") + ":" + (url_object.password || "");
+                    } else {
+                        // just check for a username
+                        // get the characters between the scheme and atsign
+                        url_object.username = lleft.substring((-~scheme_index) ? (scheme_index + 3) : 0, atsign_index) || null;
+                        // remove from the lleft
+                        lleft = lleft.substring(0, (-~scheme_index) ? (scheme_index + 3) : 0);
+                        // set the userinfo
+                        url_object.userinfo = (url_object.username || "");
                     }
                     // reset the left
-                    url_object.left = "";
+                    url_object.left = lleft;
+
                 } // no auth...no action needed
 
+                // (§) Get The Scheme scheme/protocol/left/punct.left
+                // loop over schemes to check what matches
+                var schemes = constants.schemes;
+                var lleft = url_object.left;
+                for (var i = 0, l = schemes.length; i < l; i++) {
+                    var scheme = schemes[i];
+                    var scheme_index = lleft.toLowerCase().lastIndexOf(scheme);
+                    if (-~scheme_index) {
+                        // the following code checks for this case...
+                        // https://///////www.google.com/?gws_rd=ssl => passes
+                        // https:////chars/////www.google.com/?gws_rd=ssl => fails
+                        // get the remaining strings parts
+                        var before = lleft.substring(0, scheme_index);
+                        var new_left = lleft.substring(scheme_index, scheme.length);
+                        var after = lleft.substring(scheme_index + scheme.length, lleft.length);
+                        // reset...
+                        // reset the left
+                        lleft = before;
+                        url_object.left = before;
+                        if (after && after.replace(/\//g, "") !== "") {
+                            // illegal chars detected...
+                            return error(url_object, "illegal_chars_scheme");
+                        }
+                        // set the scheme/protocol
+                        url_object.scheme = scheme;
+                        url_object.protocol = scheme.replace("://", "");
+                        break;
+                    }
+                }
+
+                // left must be empty at this point...if not...
+                // add the remains to the left punctuation
+                if (url_object.left !== "") url_object.punct.left = lleft;
+
+                // (§) Set The Hostname/Host/Origin
+                // get subdomains
+                var subdomains = url_object.subdomains,
+                    tld = url_object.tld;
+
+                // if there are subdomains append a dot
+                if (subdomains) subdomains += ".";
+
+                // get needs parts...
+                var subdomains_plus_domain = subdomains + url_object.domain;
+                // if the TLD === localhost, use an empty string
+                var tld_ = (tld !== "localhost" ? ("." + tld) : "");
+                var port = (url_object.port ? (":" + url_object.port) : "");
+                var scheme = (url_object.scheme || "");
+                // set...
+                url_object.hostname = subdomains_plus_domain + tld_;
+                url_object.host = subdomains_plus_domain + tld_ + port;
+                url_object.origin = scheme + subdomains_plus_domain + tld_ + port;
+
+                // (§) Set The Authority
+                // username:password@first.second.www.google.co.uk:9000
+                url_object.authority = (url_object.userinfo ? url_object.userinfo + "@" : "") + (url_object.host || "");
+
+                // (§) Set The Top Information
+                // get TLD list from the global scope
+                var top_domains = constants.top_domains,
+                    domain = url_object.domain;
+                if (domain) {
+                    var tlds = top_domains[domain.toLowerCase()];
+                    if (tlds) {
+                        // set the top flags
+                        // the domain is in the top of websites
+                        url_object.top.domain = true;
+                        // the tld is also in the top of websites
+                        if (-~tlds.indexOf(url_object.tld)) url_object.top.mdomain = true;
+                    }
+                }
             },
             /**
              * @description [Parses right of URL for port, query, parameters, & fragment.]
@@ -505,33 +542,46 @@
                 if (!url_object.right.length) return;
 
                 // check if the first character is an illegal character
-                if ((/[`~\!@\#\$%\^\&\*\(\)\-\_\=\+\[\]\{\}\\\|;'",\.<\>\?]/).test(url_object.right.charAt(0))) {
-                    // only chars allowed are colon (:) and a slash (/)
+                // the starting char must be a colon (:) or a slash (/)
+                if (!-~[":", "/"].indexOf(url_object.right.charAt(0))) {
+                    // end parsing the right side and set the right as punctuation
                     url_object.punct.right = url_object.right;
-                    url_object.path = "";
+                    // reset...
+                    url_object.resource = null;
                     return;
                 }
 
-                // (§) EXTRACT PORT IF PRESENT
-                // **Note: Fix this RegExp
-                // var port_matches = (url_object.right.match(/^\:(\d+)?\/?/) || []);
+                // (§) Extract Port If Present
                 var port_matches = (url_object.right.match(/^\:(\d+)/) || []);
                 if (port_matches.length) {
+                    // get the port
+                    var port = port_matches[0].replace(/\:/g, "");
                     // set port
-                    url_object.port = ((port_matches[0] === ":/") ? null : port_matches[0].replace(/\:|\//g, ""));
-                    // check if the port contains
+                    url_object.port = (port || null);
                     // remove port from right
-                    // url_object.right = "/" + url_object.right.replace(port_matches[0], "");
                     var right = url_object.right.replace(port_matches[0], "");
                     url_object.right = right;
+
+                    // after the port there must be nothing or a forward slash
+                    if (!-~["", "/"].indexOf(url_object.right.charAt(0))) {
+                        // end parsing the right side and set the right as punctuation
+                        url_object.punct.right = right;
+                        // reset...
+                        url_object.resource = null;
+                        return;
+                    } else {
+                        // reset...
+                        if (right) url_object.resource = right;
+                        if (right) url_object.pathname = right;
+                    }
+
                 }
 
-                // (§) SET URL_OBJECT PATH
-                url_object.path = url_object.right;
+                // scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
 
-                // (§) GET FRAGMENT
+                // (§) Get Fragment
                 var fragment_index = url_object.right.indexOf("#");
-                if (fragment_index !== -1) { // has fragment
+                if (-~fragment_index) { // has fragment
                     // set fragment
                     var hash = url_object.right.substring(fragment_index, url_object.right.length);
                     url_object.fragment = hash.replace(/^#/, "");
@@ -540,9 +590,9 @@
                     url_object.right = url_object.right.substring(0, fragment_index);
                 }
 
-                // (§) GET QUERY
+                // (§) Get Query
                 var query_index = url_object.right.indexOf("?");
-                if (query_index !== -1) { // has query
+                if (-~query_index) { // has query
                     var query = url_object.right.substring(query_index, url_object.right.length).replace(/^\?/, "");
                     // set query
                     url_object.query = query;
@@ -558,68 +608,36 @@
                     }
                 }
 
-                // (§) RESET PATH, RESOURCE
-                url_object.path = url_object.right;
+                // (§) Get Filename
+                // check if the last chars is an extension
+                var path = url_object.right;
+                if (path) {
+                    // split directory names into an array
+                    var directories = path.split("/");
+                    // get the last array item (it is the filename)
+                    var filename = directories.pop();
+                    // there needs to be a filename
+                    if (filename.split(".").length >= 2) {
+                        // set the filename
+                        if (filename) {
+                            // CHECK FILENAME EXTENSION??
+                            // check that the file extension is exists
+                            // var parts = filename.split(".");
+                            // var extension = parts.pop();
+                            // if (-~constants.extensions.indexOf(extension)) error(url_object, "invalid_filename_extension");
 
-            },
-            /**
-             * @description [Sets the hostname property.]
-             * @param {Object} url_object [The url_object to work with.]
-             */
-            "set_hostname": function(url_object) {
-                // get subdomains
-                var subdomains = url_object.subdomains,
-                    tld = url_object.tld;
-
-                // if there are subdomains append a dot
-                if (subdomains) subdomains += ".";
-
-                // add hostname prop to object
-                // if the TLD === localhost, use an empty string
-                url_object.hostname = subdomains + url_object.domain + (tld !== "localhost" ? ("." + tld) : "");
-                url_object.host = subdomains + url_object.domain + (tld !== "localhost" ? ("." + tld) : "") + (url_object.port ? (":" + url_object.port) : "");
-                url_object.origin = (url_object.scheme ? url_object.scheme : "") + subdomains + url_object.domain + (tld !== "localhost" ? ("." + tld) : "") + (url_object.port ? (":" + url_object.port) : "");
-            },
-            /**
-             * @description [Sets the authority property.]
-             * @param {Object} url_object [The url_object to work with.]
-             */
-            "set_authority": function(url_object) {
-                // username:password@first.second.www.google.co.uk:9000
-                url_object.authority =
-                    (url_object.userinfo ? url_object.userinfo + "@" : "") +
-                    (url_object.host ? url_object.host : "");
-            },
-            /**
-             * @description [Checks whether the domain and mdomain are in the top 10,000 sites.]
-             * @param {Object} url_object [The url_object to work with.]
-             */
-            "is_top_site_domain": function(url_object) {
-                // get TLD list from the global scope
-                var top_domains = constants.top_domains;
-                if (url_object.domain && top_domains[url_object.domain.toLowerCase()]) {
-                    // the url contains a top site domain/mdomain
-                    // set the top url_object flag
-                    var domain = constants.top_domains[url_object.domain.toLowerCase()];
-                    if (!domain) return;
-                    if (domain) url_object.top.domain = true;
-                    if (-~domain.indexOf(url_object.tld)) url_object.top.mdomain = true;
+                            // set the filename and directories
+                            url_object.filename = filename;
+                        }
+                    }
+                    // reset the directories
+                    directories = directories.join("/");
+                    if (directories === "") directories = "/";
+                    if (directories) url_object.directory = directories;
                 }
-            },
-            /**
-             * @description [Removes trailing slash from path if not originally set.]
-             * @param {Object} url_object [The url_object to work this.]
-             */
-            "remove_traling_slash": function(url_object) {
-                // cache tslash
-                var had_trailing_slash = url_object.tslash;
-                // check if URL has a fragment ot query
-                // no further checking neccessary
-                if (url_object.query || url_object.hash) return;
-                // if it did not originally have..remove it if there
-                if (!had_trailing_slash) url_object.path = url_object.path.replace(/\/$/, "");
-                // else if it did have it we just leave it there...
-                // as this is the way the user provided the URL
+
+                // (§) Reset Pathname
+                url_object.pathname = url_object.right;
             },
             /**
              * @description [Remove any right side punctuation, it at all.]
@@ -630,7 +648,7 @@
                 // cache needed vars
                 var fragment = url_object.hash,
                     query = url_object.query,
-                    path = url_object.path;
+                    path = url_object.pathname;
 
                 // determine the string
                 var string,
@@ -643,7 +661,7 @@
                     type = "query";
                 } else if (path) {
                     string = path;
-                    type = "path";
+                    type = "pathname";
                 } else {
                     // return as there is no string to work with
                     return;
@@ -716,45 +734,67 @@
                 }
 
             },
-            /**
-             * @description [Sets the resource property.]
-             * @param {Object} url_object [The url_object to work with.]
-             */
-            "set_resource": function(url_object) {
-                // resource is the: path + query + fragment
-                if (!url_object.path) return;
-                url_object.resource = url_object.path + (url_object.query || "") + (url_object.hash || "");
-            },
-            /**
-             * @description [Sets the filename & directory property.]
-             * @param {Object} url_object [The url_object to work with.]
-             */
-            "check_file_info": function(url_object) {
-                // check if the last chars is an extension
-                var path = url_object.path;
-                // return if no path is present
-                if (!path || path === "/") return;
-                // split into directories
-                var directory = path.split("/");
-                // get the last array item (it is the filename)
-                var filename = directory.pop();
-                // there needs to be a filename
-                if (filename.split(".").length < 2) return;
-                // reset the directory
-                directory = directory.join("/");
-                if (directory === "") directory = "/";
-                // set the filename and directory
-                if (filename) {
-                    // CHECK FILENAME EXTENSION??
-                    // check that the file extension is exists
-                    // var parts = filename.split(".");
-                    // var extension = parts.pop();
-                    // if (-~constants.extensions.indexOf(extension)) error(url_object, "invalid_filename_extension");
+            "normalize_end": function(url_object) {
 
-                    // set the filename and directory
-                    url_object.filename = filename;
+                // [http://www.convertstring.com/EncodeDecode/HexEncode]
+                // [https://perishablepress.com/stop-using-unsafe-characters-in-urls/]
+                // var unreserved_chars = { "0": "%30", "1": "%31", "2": "%32", "3": "%33", "4": "%34", "5": "%35", "6": "%36", "7": "%37", "8": "%38", "9": "%39", "$": "%24", "~": "%7E", "-": "%2D", "_": "%5F", ".": "%2E", "+": "%2B", "!": "%21", "*": "%2A", "'": "%27", "(": "%28", ")": "%29", ",": "%2C", "a": "%61", "b": "%62", "c": "%63", "d": "%64", "e": "%65", "f": "%66", "g": "%67", "h": "%68", "i": "%69", "j": "%6A", "k": "%6B", "l": "%6C", "m": "%6D", "n": "%6E", "o": "%6F", "p": "%70", "q": "%71", "r": "%72", "s": "%73", "t": "%74", "u": "%75", "v": "%76", "w": "%77", "x": "%78", "y": "%79", "z": "%7A", "A": "%41", "B": "%42", "C": "%43", "D": "%44", "E": "%45", "F": "%46", "G": "%47", "H": "%48", "I": "%49", "J": "%4A", "K": "%4B", "L": "%4C", "M": "%4D", "N": "%4E", "O": "%4F", "P": "%50", "Q": "%51", "R": "%52", "S": "%53", "T": "%54", "U": "%55", "V": "%56", "W": "%57", "X": "%58", "Y": "%59", "Z": "%5A" };
+                var unreserved_chars_ = { "%30": "0", "%31": "1", "%32": "2", "%33": "3", "%34": "4", "%35": "5", "%36": "6", "%37": "7", "%38": "8", "%39": "9", "%24": "$", "%7E": "~", "%2D": "-", "%5F": "_", "%2E": ".", "%2B": "+", "%21": "!", "%2A": "*", "%27": "'", "%28": "(", "%29": ")", "%2C": ",", "%61": "a", "%62": "b", "%63": "c", "%64": "d", "%65": "e", "%66": "f", "%67": "g", "%68": "h", "%69": "i", "%6A": "j", "%6B": "k", "%6C": "l", "%6D": "m", "%6E": "n", "%6F": "o", "%70": "p", "%71": "q", "%72": "r", "%73": "s", "%74": "t", "%75": "u", "%76": "v", "%77": "w", "%78": "x", "%79": "y", "%7A": "z", "%41": "A", "%42": "B", "%43": "C", "%44": "D", "%45": "E", "%46": "F", "%47": "G", "%48": "H", "%49": "I", "%4A": "J", "%4B": "K", "%4C": "L", "%4D": "M", "%4E": "N", "%4F": "O", "%50": "P", "%51": "Q", "%52": "R", "%53": "S", "%54": "T", "%55": "U", "%56": "V", "%57": "W", "%58": "X", "%59": "Y", "%5A": "Z" };
+
+                // if there is an empty domain like http://username:password@www.@subdomain.example.卷筒纸.com (@www.@domain)
+                var parts = ["scheme", "userinfo", "hostname", "port", "pathname", "query", "hash"];
+                var url = [];
+                for (var i = 0, l = parts.length; i < l; i++) {
+                    var part_name = parts[i];
+                    var part = url_object[part_name];
+
+                    // skip loop iteration if the part is not set to something
+                    if (part === null) continue;
+
+                    // normalize
+                    if (-~["scheme", "hostname"].indexOf(part_name)) {
+                        // (§) Converting the scheme and host to lower case
+                        part = part.toLowerCase();
+                    } else if (part_name === "userinfo") {
+                        part += "@";
+                    } else if (part_name === "port") {
+                        // (§) Removing the default ports (http:80, https:443)
+                        part = ((-~["80", "443"].indexOf(part)) ? "" : (":" + part));
+                    } else if (-~["pathname", "query", "hash"].indexOf(part_name)) {
+                        // (§) Capitalizing letters in escape sequences
+                        // (§) Decoding percent-encoded octets of unreserved characters
+                        var pattern = /\%[a-f0-9]{2}/gi;
+                        part = part.replace(pattern, function(match) {
+                            // check if it's in the unreserved chars list
+                            // replace with its character or simplt uppercase the match
+                            return (unreserved_chars_[match]) ? unreserved_chars_[match] : match.toUpperCase();
+                        });
+                        // (§) Add the trailing slash
+                        if (part_name === "pathname") {
+                            if (!url_object.filename && part_name !== "/") {
+                                // (§) Remove double+ slashes
+                                part = part.replace(/\/{2,}/g, "/");
+                                // there is a pathname to add a slash to
+                                // the last character must not be a slash
+                                if (part.charAt(part.length - 1) !== "/") {
+                                    // add the trailing slash
+                                    part += "/";
+                                }
+                            }
+                        } else if (part_name === "query") {
+                            // (§) Removing the "?" when the query is empty
+                            part = ((part === "") ? "" : ("?" + part));
+                        } else if (part_name === "hash") {
+                            // (§) Removing the "#" when the query is empty
+                            part = ((part === "#") ? "" : part);
+                        }
+
+                    }
+
+                    url.push(part || "");
                 }
-                if (directory) url_object.directory = directory;
+                url_object.normalized = url.join("");
+
             },
             /**
              * @description [Builds the final url and adds it to the url_object.]
@@ -764,7 +804,7 @@
 
                 // if there is an empty domain like http://username:password@www.@subdomain.example.卷筒纸.com (@www.@domain)
                 var o = url_object;
-                var parts = ["scheme", "userinfo", "hostname", "port", "path", "query", "hash"];
+                var parts = ["scheme", "userinfo", "hostname", "port", "pathname", "query", "hash"];
                 var url = [];
                 for (var i = 0, l = parts.length; i < l; i++) {
                     var part = o[parts[i]];
@@ -824,21 +864,18 @@
             var algorithm = [
                 "is_empty",
                 "min_length",
-                // "add_traling_slash",
+                // "add_traling_slash", // needed??
+                // "remove_traling_slash", // needed??
                 "illegal_chars",
+                "normalize_start",
                 "get_tlds",
                 "validate_tld",
                 "split_url",
                 "work_left",
                 "work_right",
-                "set_hostname",
-                "set_authority",
-                "is_top_site_domain",
-                // "remove_traling_slash",
                 "punct_right",
-                "set_resource",
-                "check_file_info",
                 "build_url",
+                "normalize_end",
                 "final_check"
             ];
             // loop through all parsing steps
