@@ -1022,12 +1022,10 @@
                     } else if (parts[i] === "port" && part) {
                         part = ":" + part;
                     } else if (parts[i] === "query" && part) {
-                        // part = part;
-                        // reset the query
-                        if (part === "?") {
-                            url_object[part] = "";
+                        // remove the starting `?` from the query if present
+                        if ((/^\?/).test(part)) {
+                            url_object["query"] = part.replace(/^\?/, "");
                         }
-                        // part = "?" + part;
                     }
 
                     url.push(part || "");
