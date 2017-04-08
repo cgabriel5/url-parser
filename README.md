@@ -39,115 +39,254 @@ var parseURL = window.app.libs.parseURL;
 <a name="usage"></a>
 ### Usage
 
+For an exhaustive list of URLs see `app.js`. Run `index.html` and open up the console.
+
 ```js
 parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
 // output
 {
-    "error": false,
-    "auth": null,
-    "top": true,
-    "url": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
-    "scheme": "https",
+    "source": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
+    "error": null,
+    "top": {
+        "mdomain": true,
+        "domain": true
+    },
+    "punct": {
+        "left": "",
+        "right": ""
+    },
+    "mdomain": "youtube.com",
+    "scheme": "https://",
+    "protocol": "https",
+    "userinfo": null,
     "username": null,
     "password": null,
-    "subdomains": ["www"],
+    "subdomains": "www",
     "domain": "youtube",
-    "mdomain": "youtube.com",
     "tld": "com",
-    "hostname": "www.youtube.com",
     "port": null,
-    "path": "/watch",
-    "query": "?v=Gj2nOk8af-o",
-    "parameters": {"v":"Gj2nOk8af-o"},
-    "fragment":null
+    "pathname": "/watch",
+    "query": "v=Gj2nOk8af-o",
+    "parameters": {
+        "v": "Gj2nOk8af-o"
+    },
+    "fragment": null,
+    "hash": null,
+    "authority": "www.youtube.com",
+    "url": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
+    "normalized": "https://www.youtube.com/watchv=Gj2nOk8af-o",
+    "directory": "/watch",
+    "filename": null,
+    "hostname": "www.youtube.com",
+    "host": "www.youtube.com",
+    "origin": "https://www.youtube.com",
+    "resource": "/watch?v=Gj2nOk8af-o",
+    "data": {
+        "mediatype": null,
+        "type": null,
+        "subtype": null,
+        "parameters": null,
+        "data": null,
+        "base64": false,
+        "scheme": "data:",
+        "protocol": "data"
+    }
 }
 
 parseURL("https://youtu.be/1xo3af_6_Jk");
 // output
 {
-    "error": false,
-    "auth": null,
-    "top": false,
-    "url":"https://youtu.be/1xo3af_6_Jk",
-    "scheme": "https",
+    "source": "https://youtu.be/1xo3af_6_Jk",
+    "error": null,
+    "top": {
+        "mdomain": false,
+        "domain": false
+    },
+    "punct": {
+        "left": "",
+        "right": ""
+    },
+    "mdomain": "youtu.be",
+    "scheme": "https://",
+    "protocol": "https",
+    "userinfo": null,
     "username": null,
     "password": null,
-    "subdomains": [],
+    "subdomains": "",
     "domain": "youtu",
-    "mdomain": "youtu.be",
     "tld": "be",
-    "hostname": "youtu.be",
     "port": null,
-    "path": "/1xo3af_6_Jk",
+    "pathname": "/1xo3af_6_Jk",
     "query": null,
     "parameters": {},
-    "fragment":null
+    "fragment": null,
+    "hash": null,
+    "authority": "youtu.be",
+    "url": "https://youtu.be/1xo3af_6_Jk",
+    "normalized": "https://youtu.be/1xo3af_6_Jk",
+    "directory": "/1xo3af_6_Jk",
+    "filename": null,
+    "hostname": "youtu.be",
+    "host": "youtu.be",
+    "origin": "https://youtu.be",
+    "resource": "/1xo3af_6_Jk",
+    "data": {
+        "mediatype": null,
+        "type": null,
+        "subtype": null,
+        "parameters": null,
+        "data": null,
+        "base64": false,
+        "scheme": "data:",
+        "protocol": "data"
+    }
 }
 
 parseURL("https://www.google.com/");
 // output
 {
-    "error": false,
-    "auth": null,
-    "top": true,
-    "url": "https://www.google.com/",
-    "scheme": "https",
+    "source": "https://www.google.com/",
+    "error": null,
+    "top": {
+        "mdomain": true,
+        "domain": true
+    },
+    "punct": {
+        "left": "",
+        "right": ""
+    },
+    "mdomain": "google.com",
+    "scheme": "https://",
+    "protocol": "https",
+    "userinfo": null,
     "username": null,
     "password": null,
-    "subdomains": ["www"],
+    "subdomains": "www",
     "domain": "google",
-    "mdomain": "google.com",
     "tld": "com",
-    "hostname": "www.google.com",
     "port": null,
-    "path": "/",
+    "pathname": "/",
     "query": null,
     "parameters": {},
-    "fragment":null
+    "fragment": null,
+    "hash": null,
+    "authority": "www.google.com",
+    "url": "https://www.google.com/",
+    "normalized": "https://www.google.com/",
+    "directory": "/",
+    "filename": null,
+    "hostname": "www.google.com",
+    "host": "www.google.com",
+    "origin": "https://www.google.com",
+    "resource": "/",
+    "data": {
+        "mediatype": null,
+        "type": null,
+        "subtype": null,
+        "parameters": null,
+        "data": null,
+        "base64": false,
+        "scheme": "data:",
+        "protocol": "data"
+    }
 }
 
 parseURL("https://google.com/");
 // output
 {
-    "error": false,
-    "auth": null,
-    "top": true,
-    "url": "https://google.com/",
-    "scheme": "https",
+    "source": "https://google.com/",
+    "error": null,
+    "top": {
+        "mdomain": true,
+        "domain": true
+    },
+    "punct": {
+        "left": "",
+        "right": ""
+    },
+    "mdomain": "google.com",
+    "scheme": "https://",
+    "protocol": "https",
+    "userinfo": null,
     "username": null,
     "password": null,
-    "subdomains": [],
+    "subdomains": "",
     "domain": "google",
-    "mdomain": "google.com",
     "tld": "com",
-    "hostname": "google.com",
     "port": null,
-    "path": "/",
+    "pathname": "/",
     "query": null,
     "parameters": {},
-    "fragment":null
+    "fragment": null,
+    "hash": null,
+    "authority": "google.com",
+    "url": "https://google.com/",
+    "normalized": "https://google.com/",
+    "directory": "/",
+    "filename": null,
+    "hostname": "google.com",
+    "host": "google.com",
+    "origin": "https://google.com",
+    "resource": "/",
+    "data": {
+        "mediatype": null,
+        "type": null,
+        "subtype": null,
+        "parameters": null,
+        "data": null,
+        "base64": false,
+        "scheme": "data:",
+        "protocol": "data"
+    }
 }
 
 parseURL("google.com");
 // output
 {
-    "error": false,
-    "auth": null,
-    "top": false,
-    "url": "google.com",
+    "source": "google.com",
+    "error": null,
+    "top": {
+        "mdomain": true,
+        "domain": true
+    },
+    "punct": {
+        "left": "",
+        "right": ""
+    },
+    "mdomain": "google.com",
     "scheme": null,
+    "protocol": null,
+    "userinfo": null,
     "username": null,
     "password": null,
-    "subdomains": [],
+    "subdomains": "",
     "domain": "google",
-    "mdomain": "google.com",
     "tld": "com",
-    "hostname": "google.com",
     "port": null,
-    "path": "",
+    "pathname": null,
     "query": null,
     "parameters": {},
-    "fragment":null
+    "fragment": null,
+    "hash": null,
+    "authority": "google.com",
+    "url": "google.com",
+    "normalized": "google.com",
+    "directory": null,
+    "filename": null,
+    "hostname": "google.com",
+    "host": "google.com",
+    "origin": "google.com",
+    "resource": "",
+    "data": {
+        "mediatype": null,
+        "type": null,
+        "subtype": null,
+        "parameters": null,
+        "data": null,
+        "base64": false,
+        "scheme": "data:",
+        "protocol": "data"
+    }
 }
 ```
 
