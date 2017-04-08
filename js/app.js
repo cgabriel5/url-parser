@@ -2,128 +2,10 @@ document.onreadystatechange = function() {
 
     "use strict";
 
-    /* [functions.utils] */
-
     if (document.readyState == "complete") {
 
-        var test,
-            // get the library
-            parseURL = window.app.libs.parseURL;
-
-        // test = parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
-        // console.log(test);
-        // // output
-        // // {
-        // //     "error": false,
-        // //     "auth": null,
-        // //     "top": true,
-        // //     "url": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
-        // //     "scheme": "https",
-        // //     "username": null,
-        // //     "password": null,
-        // //     "subdomains": ["www"],
-        // //     "domain": "youtube",
-        // //     "mdomain": "youtube.com",
-        // //     "tld": "com",
-        // //     "hostname": "www.youtube.com",
-        // //     "port": null,
-        // //     "path": "/watch",
-        // //     "query": "?v=Gj2nOk8af-o",
-        // //     "parameters": {"v":"Gj2nOk8af-o"},
-        // //     "fragment":null
-        // // }
-
-        // test = parseURL("https://youtu.be/1xo3af_6_Jk");
-        // console.log(test);
-        // // output
-        // // {
-        // //     "error": false,
-        // //     "auth": null,
-        // //     "top": false,
-        // //     "url":"https://youtu.be/1xo3af_6_Jk",
-        // //     "scheme": "https",
-        // //     "username": null,
-        // //     "password": null,
-        // //     "subdomains": [],
-        // //     "domain": "youtu",
-        // //     "mdomain": "youtu.be",
-        // //     "tld": "be",
-        // //     "hostname": "youtu.be",
-        // //     "port": null,
-        // //     "path": "/1xo3af_6_Jk",
-        // //     "query": null,
-        // //     "parameters": {},
-        // //     "fragment":null
-        // // }
-
-        // test = parseURL("https://www.google.com/");
-        // console.log(test);
-        // // output
-        // // {
-        // //     "error": false,
-        // //     "auth": null,
-        // //     "top": true,
-        // //     "url": "https://www.google.com/",
-        // //     "scheme": "https",
-        // //     "username": null,
-        // //     "password": null,
-        // //     "subdomains": ["www"],
-        // //     "domain": "google",
-        // //     "mdomain": "google.com",
-        // //     "tld": "com",
-        // //     "hostname": "www.google.com",
-        // //     "port": null,
-        // //     "path": "/",
-        // //     "query": null,
-        // //     "parameters": {},
-        // //     "fragment":null
-        // // }
-
-        // test = parseURL("https://google.com/");
-        // console.log(test);
-        // // output
-        // // {
-        // //     "error": false,
-        // //     "auth": null,
-        // //     "top": true,
-        // //     "url": "https://google.com/",
-        // //     "scheme": "https",
-        // //     "username": null,
-        // //     "password": null,
-        // //     "subdomains": [],
-        // //     "domain": "google",
-        // //     "mdomain": "google.com",
-        // //     "tld": "com",
-        // //     "hostname": "google.com",
-        // //     "port": null,
-        // //     "path": "/",
-        // //     "query": null,
-        // //     "parameters": {},
-        // //     "fragment":null
-        // // }
-
-        // test = parseURL("google.com");
-        // console.log(test);
-        // // output
-        // // {
-        // //     "error": false,
-        // //     "auth": null,
-        // //     "top": false,
-        // //     "url": "google.com",
-        // //     "scheme": null,
-        // //     "username": null,
-        // //     "password": null,
-        // //     "subdomains": [],
-        // //     "domain": "google",
-        // //     "mdomain": "google.com",
-        // //     "tld": "com",
-        // //     "hostname": "google.com",
-        // //     "port": null,
-        // //     "path": "",
-        // //     "query": null,
-        // //     "parameters": {},
-        // //     "fragment":null
-        // // }
+        // get the library
+        var parseURL = window.app.libs.parseURL;
 
         // random test strings
         var pool = [
@@ -132,9 +14,12 @@ document.onreadystatechange = function() {
             // and any url that seemed good enough to test. Feel free to add/remove any url to the pool.
 
             // common syntax urls
+            "https://www.youtube.com/watch?v=Gj2nOk8af-o",
+            "https://youtu.be/1xo3af_6_Jk",
             "https://enochs.mcs4kids.com/",
             "https://www.google.co.uk/?gws_rd=ssl#q=youtube",
             "https://google.com/",
+            "https://www.google.com/",
             "@google.com:9090/",
             "google.com:9090/",
             "https://www.kohls.com/checkout/v2/order_confirm.jsp",
@@ -406,25 +291,74 @@ document.onreadystatechange = function() {
 
         ];
 
+        /**
+         * @description [Parses provided JSON string and adds syntax highlighting.]
+         * @param  {String|Object} json [The JSON string. Objects will be turned to string
+         *                               vis JSON.stringify method.]
+         * @param  {Number} spaces [The amount of spaces to indent by. If included an object
+         *                          and not a string needs to be provided as the first argument]
+         * @return {String}      [String with syntax highlighting.]
+         * @source [http://stackoverflow.com/a/7220510]
+         */
+        var json_syntax_highlight = function(json, spaces) {
+            if (spaces) {
+                // turn provided object to string
+                json = JSON.stringify(json, undefined, spaces);
+            }
+            json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                var cls = "number";
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        // remove key surrounding quotes the quotes
+                        match = match.replace(/^"/g, "").replace(/"\:$/g, ":");
+                        cls = "key";
+                    } else {
+                        cls = "string";
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = "boolean";
+                } else if (/null/.test(match)) {
+                    cls = "null";
+                }
+                return "<span class=\"" + cls + "\">" + match + "</span>";
+            });
+        };
+
+        // create a fragment to add all elements to the DOM in 1 go
+        var fragment = document.createDocumentFragment();
+
         // loop over test test pool
         for (var i = 0, l = pool.length; i < l; i++) {
-            // cache test + suppress errors
-            var test = parseURL(pool[i]); //, true);
-            // log test information (test status, test url, test error)
+            // cache test
+            var test = parseURL(pool[i]); //, true); // suppress errors
+            // add the test number to the test object
+            test.test = i;
+            var pre_element = document.createElement('pre');
+            // log test information
             if (!test.error) {
+                pre_element.classList.add("test-pass");
                 var url = test.url;
                 var padding = " ".repeat(test.punct.left.length);
-                console.log([test]);
+                console.log(i, [test]);
                 console.log("✔ " + padding + "%c" + url, "background: rgba(0, 0, 0, 0.01);color: #1a53ff");
                 console.log("✔ %c" + test.source, "background: rgba(0, 0, 0, 0.01);color: #1a8703");
-                // console.log([test], "✔ " + url);
-                // console.log("✔ " + test.source);
                 console.log("");
             } else {
-                console.log("✘ %c[" + test.error.name.toUpperCase() + "]", "background: #ffe6e6; color: red", test.url, [test]);
+                pre_element.classList.add("test-fail");
+                console.log(i + " ✘ %c[" + test.error.name.toUpperCase() + "]", "background: #ffe6e6; color: red", test.url, [test]);
                 console.log("");
             }
+
+            // parse url, stringify, add syntax highlighting, & finally set it to the be
+            // the inner html of the created pre element
+            pre_element.innerHTML = json_syntax_highlight(test, 4);
+            // add the element to the fragment
+            fragment.appendChild(pre_element);
         }
+
+        // add the elements to the page
+        document.body.appendChild(fragment);
 
     }
 
