@@ -61,7 +61,7 @@
          */
         function map(array, fn) {
             var result = [];
-            let length = array.length;
+            var length = array.length;
             while (length--) {
                 result[length] = fn(array[length]);
             }
