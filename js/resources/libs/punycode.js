@@ -80,7 +80,7 @@
          */
         function mapDomain(string, fn) {
             var parts = string.split('@');
-            let result = '';
+            var result = '';
             if (parts.length > 1) {
                 // In email addresses, only the domain name should be punycoded. Leave
                 // the local part (i.e. everything up to `@`) intact.
@@ -109,7 +109,7 @@
          */
         function ucs2decode(string) {
             var output = [];
-            let counter = 0;
+            var counter = 0;
             var length = string.length;
             while (counter < length) {
                 var value = string.charCodeAt(counter++);
@@ -189,7 +189,7 @@
          * @private
          */
         var adapt = function(delta, numPoints, firstTime) {
-            let k = 0;
+            var k = 0;
             delta = firstTime ? floor(delta / damp) : delta >> 1;
             delta += floor(delta / numPoints);
             for ( /* no initialization */ ; delta > baseMinusTMin * tMax >> 1; k += base) {
@@ -209,20 +209,20 @@
             // Don't use UCS-2.
             var output = [];
             var inputLength = input.length;
-            let i = 0;
-            let n = initialN;
-            let bias = initialBias;
+            var i = 0;
+            var n = initialN;
+            var bias = initialBias;
 
             // Handle the basic code points: let `basic` be the number of input code
             // points before the last delimiter, or `0` if there is none, then copy
             // the first basic code points to the output.
 
-            let basic = input.lastIndexOf(delimiter);
+            var basic = input.lastIndexOf(delimiter);
             if (basic < 0) {
                 basic = 0;
             }
 
-            for (let j = 0; j < basic; ++j) {
+            for (var j = 0; j < basic; ++j) {
                 // if it's not a basic code point
                 if (input.charCodeAt(j) >= 0x80) {
                     error('not-basic');
@@ -233,15 +233,15 @@
             // Main decoding loop: start just after the last delimiter if any basic code
             // points were copied; start at the beginning otherwise.
 
-            for (let index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */ ) {
+            for (var index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */ ) {
 
                 // `index` is the index of the next character to be consumed.
                 // Decode a generalized variable-length integer into `delta`,
                 // which gets added to `i`. The overflow checking is easier
                 // if we increase `i` as we go, then subtract off its starting
                 // value at the end to obtain `delta`.
-                let oldi = i;
-                for (let w = 1, k = base; /* no condition */ ; k += base) {
+                var oldi = i;
+                for (var w = 1, k = base; /* no condition */ ; k += base) {
 
                     if (index >= inputLength) {
                         error('invalid-input');
@@ -303,12 +303,12 @@
             input = ucs2decode(input);
 
             // Cache the length.
-            let inputLength = input.length;
+            var inputLength = input.length;
 
             // Initialize the state.
-            let n = initialN;
-            let delta = 0;
-            let bias = initialBias;
+            var n = initialN;
+            var delta = 0;
+            var bias = initialBias;
 
             // Handle the basic code points.
             for (var currentValue of input) {
@@ -317,8 +317,8 @@
                 }
             }
 
-            let basicLength = output.length;
-            let handledCPCount = basicLength;
+            var basicLength = output.length;
+            var handledCPCount = basicLength;
 
             // `handledCPCount` is the number of code points that have been handled;
             // `basicLength` is the number of basic code points.
@@ -333,7 +333,7 @@
 
                 // All non-basic code points < n have been handled already. Find the next
                 // larger one:
-                let m = maxInt;
+                var m = maxInt;
                 for (var currentValue of input) {
                     if (currentValue >= n && currentValue < m) {
                         m = currentValue;
@@ -356,8 +356,8 @@
                     }
                     if (currentValue == n) {
                         // Represent delta as a generalized variable-length integer.
-                        let q = delta;
-                        for (let k = base; /* no condition */ ; k += base) {
+                        var q = delta;
+                        for (var k = base; /* no condition */ ; k += base) {
                             var t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
                             if (q < t) {
                                 break;
