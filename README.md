@@ -26,7 +26,7 @@ Does not parse URLs in the form of an IP address.
 ### Add To Project
 
 ```html
-<script src="my_js_directory_path/urlparser.js"></script>
+<script src="path/to/lib.js"></script>
 ```
 
 <a name="access-library"></a>
