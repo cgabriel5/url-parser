@@ -14,7 +14,11 @@
     <article class="markdown-body"><h1 id="url-parser">url-parser</h1>
 <p>An experimental JavaScript URL parser.</p>
 <h5 id="table-of-contents">Table of Contents</h5>
-<p><a href="#what-it-does">What It Does</a><br><a href="#what-it-does-not-do">What It Does Not Do</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#usage">Usage</a><br><a href="#contributing">Contributing</a><br><a href="#license">License</a>  </p>
+<p><a href="#what-it-does">What It Does</a><br><a href="#what-it-does-not-do">What It Does Not Do</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#api">API</a>  </p>
+<ul class="list">
+<li><a href="#signature-api">Signature</a>    </li>
+</ul>
+<p><a href="#usage">Usage</a><br><a href="#contributing">Contributing</a><br><a href="#license">License</a>  </p>
 <p><a name="what-it-does"></a></p>
 <h3 id="what-it-does">What It Does</h3>
 <p>Parses a properly formated URL string to extract its scheme, authority (username &amp; password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.</p>
@@ -25,9 +29,16 @@
 <h3 id="add-to-project">Add To Project</h3>
 <pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
 <h3 id="access-library">Access Library</h3>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> parseURL = <span class="hljs-built_in">window</span>.app.libs.parseURL;</code></pre><p><a name="usage"></a></p>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> parseURL = <span class="hljs-built_in">window</span>.app.libs.parseURL;</code></pre><p><a name="api"></a></p>
+<h3 id="api">API</h3>
+<p><a name="signature-api"></a></p>
+<h3 id="api-&mdash;-signature">API &mdash; Signature</h3>
+<pre class="hljs"><code><span class="hljs-comment">/**
+ * @param  {String: Required} [The properly formatted URL string to parse.]
+ * @return {Object}           [Object containing the parsed URL's components.]
+ */</span></code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
-<p>For an exhaustive list of URLs see <code>app.js</code>. Run <code>index.html</code> and open up the console.</p>
+<p>For an exhaustive list of tested URLs see <code>js/source/app.js</code>. Run <code>index.html</code> and open up the console.</p>
 <pre class="hljs"><code>parseURL(<span class="hljs-string">"https://www.youtube.com/watch?v=Gj2nOk8af-o"</span>);
 <span class="hljs-comment">// output</span>
 {

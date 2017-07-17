@@ -8,6 +8,9 @@ An experimental JavaScript URL parser.
 [What It Does Not Do](#what-it-does-not-do)  
 [Add To Project](#add-to-project)  
 [Access Library](#access-library)  
+[API](#api)  
+* [Signature](#signature-api)    
+
 [Usage](#usage)  
 [Contributing](#contributing)  
 [License](#license)  
@@ -36,10 +39,23 @@ Does not parse URLs in the form of an IP address.
 var parseURL = window.app.libs.parseURL;
 ```
 
+<a name="api"></a>
+### API
+
+<a name="signature-api"></a>
+### API &mdash; Signature
+
+```js
+/**
+ * @param  {String: Required} [The properly formatted URL string to parse.]
+ * @return {Object}           [Object containing the parsed URL's components.]
+ */
+```
+
 <a name="usage"></a>
 ### Usage
 
-For an exhaustive list of URLs see `app.js`. Run `index.html` and open up the console.
+For an exhaustive list of tested URLs see `js/source/app.js`. Run `index.html` and open up the console.
 
 ```js
 parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
