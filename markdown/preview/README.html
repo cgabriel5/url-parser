@@ -14,31 +14,113 @@
     <article class="markdown-body"><h1 id="url-parser">url-parser</h1>
 <p>An experimental JavaScript URL parser.</p>
 <h5 id="table-of-contents">Table of Contents</h5>
-<p><a href="#what-it-does">What It Does</a><br><a href="#what-it-does-not-do">What It Does Not Do</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#api">API</a>  </p>
 <ul class="list">
-<li><a href="#signature-api">Signature</a>    </li>
+<li><a href="#project-setup">Project Setup</a></li>
+<li><a href="#what-it-does">What It Does</a></li>
+<li><a href="#what-it-does-not-do">What It Does Not Do</a></li>
+<li><a href="#add-to-project">Add To Project</a></li>
+<li><a href="#api">API</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#license">License</a></li>
 </ul>
-<p><a href="#usage">Usage</a><br><a href="#contributing">Contributing</a><br><a href="#license">License</a>  </p>
 <p><a name="what-it-does"></a></p>
 <h3 id="what-it-does">What It Does</h3>
 <p>Parses a properly formated URL string to extract its scheme, authority (username &amp; password), subdomains, domain, tld, hostname, port, path, query (parameters), and fragment.</p>
 <p><a name="what-it-does-not-do"></a></p>
 <h3 id="what-it-does-not-do">What It Does Not Do</h3>
 <p>Does not parse URLs in the form of an IP address.</p>
+<p><a name="project-setup"></a></p>
+<h3 id="project-setup">Project Setup</h3>
+<p>Project uses <a href="https://github.com/cgabriel5/snippets/tree/master/boilerplate/application">this</a> boilerplate. Its <a href="https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use">README.md</a> contains instructions for <code>Yarn</code> and <code>Gulp</code>.</p>
 <p><a name="add-to-project"></a></p>
 <h3 id="add-to-project">Add To Project</h3>
-<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
-<h3 id="access-library">Access Library</h3>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> parseURL = <span class="hljs-built_in">window</span>.app.libs.parseURL;</code></pre><p><a name="api"></a></p>
+<p><strong>Note</strong>: The library, both minimized and unminimized, is located in <code>lib/</code>.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-built_in">document</span>.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-meta">    "use strict"</span>;
+    <span class="hljs-comment">// once all resources have loaded</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>.readyState == <span class="hljs-string">"complete"</span>) {
+        <span class="hljs-comment">// get the library</span>
+        <span class="hljs-keyword">var</span> parseURL = <span class="hljs-built_in">window</span>.app.libs.parseURL;
+        <span class="hljs-comment">// logic...</span>
+    }
+});
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="api"></a></p>
 <h3 id="api">API</h3>
-<p><a name="signature-api"></a></p>
-<h3 id="api-&mdash;-signature">API &mdash; Signature</h3>
-<pre class="hljs"><code><span class="hljs-comment">/**
- * @param  {String: Required} [The properly formatted URL string to parse.]
- * @return {Object}           [Object containing the parsed URL's components.]
- */</span></code></pre><p><a name="usage"></a></p>
+<ul class="list">
+<li><a href="#main-function">➜ parseURL()</a></li>
+</ul>
+<p><a name="main-function"></a>
+➜ <strong>parseURL(<code>url</code>)</strong> &mdash; Parse provided URL string into its respective components.</p>
+<ul class="list">
+<li><code>url</code> (<code>String</code>, <em>Required</em>)<ul class="list">
+<li>The properly <em>formatted</em> URL string to parse.</li>
+</ul>
+</li>
+<li><strong>Returns</strong> object with the URL&#39;s <code>components.</code><ul class="list">
+<li>Object Properties:<ul class="list">
+<li><code>source</code> (<code>String</code>) The source string (provided URL string).</li>
+<li><code>error</code> (<code>Object|Null</code>) Object containing possible parsing error. Null for no errors.<ul class="list">
+<li><code>name</code> (<code>String</code>) The name of the parse error.</li>
+<li><code>human</code> (<code>String</code>) Human explanation for parsing error. </li>
+</ul>
+</li>
+<li><code>top</code> (<code>Object</code>) Object containing information whether the URL has a top domain.<ul class="list">
+<li><code>mdomain</code> (<code>Boolean</code>) Indicates whether the main domain is in the top 10,000 sites.</li>
+<li><code>domain</code> (<code>Boolean</code>) Indicates whether the domain is in the top 10,000 sites.</li>
+<li><strong>Note</strong>: Domain is compared against Alexa website data.</li>
+</ul>
+</li>
+<li><code>punct</code> (<code>Object</code>, <em>Experimental</em>) <ul class="list">
+<li><code>left</code> (<code>String</code>) Any detected left side punctuation removed from URL string.</li>
+<li><code>right</code> (<code>String</code>) Any detected right side punctuation removed from URL string.</li>
+</ul>
+</li>
+<li><code>mdomain</code> (<code>String|Null</code>) The URLs main domain (domain + tld).</li>
+<li><code>scheme</code> (<code>String|Null</code>) The URLs scheme.</li>
+<li><code>protocol</code> (<code>String|Null</code>) The URLs scheme without the <code>://</code>.</li>
+<li><code>userinfo</code> (<code>String|Null</code>) The URLs userinfo.</li>
+<li><code>username</code> (<code>String|Null</code>) The URLs username.</li>
+<li><code>password</code> (<code>String|Null</code>) The URLs password.</li>
+<li><code>subdomains</code> (<code>Array</code>) Array containing extracted subdomains.</li>
+<li><code>domain</code> (<code>String|Null</code>) The URLs domain.</li>
+<li><code>tld</code> (<code>String|Null</code>) The URLs top-level domain.</li>
+<li><code>port</code> (<code>Number|Null</code>) The URLs used port.</li>
+<li><code>pathname</code> (<code>String|Null</code>) The URLs pathname.</li>
+<li><code>query</code> (<code>String|Null</code>) The URLs query.</li>
+<li><code>parameters</code> (<code>Object</code>) Object containing the query parameters.</li>
+<li><code>fragment</code> (<code>String|Null</code>) The URLs fragment.</li>
+<li><code>hash</code> (<code>String|Null</code>) The URLs hash.</li>
+<li><code>authority</code> (<code>String|Null</code>) The URLs authority (username + password + subdomains + domain + tld + port).</li>
+<li><code>url</code> (<code>String</code>) The final, clean URL with any left/right punctuation removed.</li>
+<li><code>normalized</code> (<code>String</code>) The final URL but normalized.</li>
+<li><code>directory</code> (<code>String|Null</code>) The URLs directory.</li>
+<li><code>filename</code> (<code>String|Null</code>) The URLs filename.</li>
+<li><code>hostname</code> (<code>String|Null</code>) The URLs hostname (subdomains + domain + tld).</li>
+<li><code>host</code> (<code>String|Null</code>) The URLs host (subdomains + domain + tld + port).</li>
+<li><code>origin</code> (<code>String|Null</code>) The URLs origin (everything from the scheme to port).</li>
+<li><code>resource</code> (<code>String|Null</code>) The URLs resource (everything from the path to the end of the URL).</li>
+<li><code>data</code> (<code>Object</code>) When the URL is a base64 URL this object will contain its information.<ul class="list">
+<li><code>mediatype</code> (<code>String|Null</code>) The URLs mediatype.</li>
+<li><code>type</code> (<code>String|Null</code>) The URLs type.</li>
+<li><code>subtype</code> (<code>String|Null</code>) The URLs subtype.</li>
+<li><code>parameters</code> (<code>String|Null</code>) The URLs parameters.</li>
+<li><code>data</code> (<code>String|Null</code>) The URLs data.</li>
+<li><code>base64</code> (<code>Boolean</code>) Indicates whether the URL is a base64 URL.</li>
+<li><code>scheme</code> (<code>String</code>) Will always be <code>&quot;data:&quot;</code>.</li>
+<li><code>protocol</code> (<code>String</code>) Will always be <code>&quot;data&quot;</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
-<p>For an exhaustive list of tested URLs see <code>js/source/app.js</code>. Run <code>index.html</code> and open up the console.</p>
+<p>For an exhaustive list of tested URLs see <code>js/source/test.js</code>. Run <code>index.html</code> and open up the console. URLs that fail the parser will be found at the very bottom of the webpage.</p>
 <pre class="hljs"><code>parseURL(<span class="hljs-string">"https://www.youtube.com/watch?v=Gj2nOk8af-o"</span>);
 <span class="hljs-comment">// output</span>
 {
