@@ -58,7 +58,7 @@ document.onreadystatechange = function() {
 
 - `url` (`String`, _Required_)
     - The properly _formatted_ URL string to parse.
-- **Returns** object with the URL's `components.`
+- **Returns** object with the URL's components.
     - Object Properties:
         - `source` (`String`) The source string (provided URL string).
         - `error` (`Object|Null`) Object containing possible parsing error. Null for no errors.
