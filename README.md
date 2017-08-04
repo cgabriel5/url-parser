@@ -13,6 +13,11 @@ An experimental JavaScript URL parser.
 - [Contributing](#contributing)
 - [License](#license)
 
+<a name="project-setup"></a>
+### Project Setup
+
+Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Its [README.md](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use) contains instructions for `Yarn` and `Gulp`.
+
 <a name="what-it-does"></a>
 ### What It Does
 
@@ -22,11 +27,6 @@ Parses a properly formated URL string to extract its scheme, authority (username
 ### What It Does Not Do
 
 Does not parse URLs in the form of an IP address.
-
-<a name="project-setup"></a>
-### Project Setup
-
-Project uses [this](https://github.com/cgabriel5/snippets/tree/master/boilerplate/application) boilerplate. Its [README.md](https://github.com/cgabriel5/snippets/blob/master/boilerplate/application/README.md#-read-before-use) contains instructions for `Yarn` and `Gulp`.
 
 <a name="add-to-project"></a>
 ### Add To Project
