@@ -20,7 +20,10 @@
 <li><a href="#what-it-does-not-do">What It Does Not Do</a></li>
 <li><a href="#add-to-project">Add To Project</a></li>
 <li><a href="#api">API</a></li>
-<li><a href="#usage">Usage</a></li>
+<li><a href="#usage">Usage</a><ul class="list">
+<li><a href="#usage-examples">Examples</a></li>
+</ul>
+</li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#license">License</a></li>
 </ul>
@@ -120,9 +123,23 @@
 </ul>
 <p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
-<p>For an exhaustive list of tested URLs see <code>js/source/test.js</code>. Run <code>index.html</code> and open up the console. URLs that fail the parser will be found at the very bottom of the webpage.</p>
-<pre class="hljs"><code>parseURL(<span class="hljs-string">"https://www.youtube.com/watch?v=Gj2nOk8af-o"</span>);
-<span class="hljs-comment">// output</span>
+<p><strong>Note</strong>: The following are just examples and is not an exhaustive list. For an exhaustive list of tested URLs see <code>js/source/test.js</code>. Run <code>index.html</code> and open up the console. URLs that fail the parser will be found at the very bottom of both the console (red error message) and the webpage (red border).</p>
+<p><a name="usage-examples-toc"></a></p>
+<ul class="list">
+<li><a href="#usage-examples">Examples</a><ul class="list">
+<li><a href="#example-parse-1">Parse Example 1</a></li>
+<li><a href="#example-parse-2">Parse Example 2</a></li>
+<li><a href="#example-parse-3">Parse Example 3</a></li>
+<li><a href="#example-parse-4">Parse Example 4</a></li>
+<li><a href="#example-parse-5">Parse Example 5</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="usage-examples"></a></p>
+<h3 id="examples">Examples</h3>
+<p><a name="example-parse-1"></a>
+<strong>Parse Example 1</strong> &mdash; <code>https://www.youtube.com/watch?v=Gj2nOk8af-o</code></p>
+<pre class="hljs"><code>parseURL(<span class="hljs-string">"https://www.youtube.com/watch?v=Gj2nOk8af-o"</span>);</code></pre><pre class="hljs"><code><span class="hljs-comment">// output</span>
 {
     <span class="hljs-string">"source"</span>: <span class="hljs-string">"https://www.youtube.com/watch?v=Gj2nOk8af-o"</span>,
     <span class="hljs-string">"error"</span>: <span class="hljs-literal">null</span>,
@@ -170,10 +187,9 @@
         <span class="hljs-string">"scheme"</span>: <span class="hljs-string">"data:"</span>,
         <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"data"</span>
     }
-}
-
-parseURL(<span class="hljs-string">"https://youtu.be/1xo3af_6_Jk"</span>);
-<span class="hljs-comment">// output</span>
+}</code></pre><p><a name="example-parse-2"></a>
+<strong>Parse Example 2</strong> &mdash; <code>https://youtu.be/1xo3af_6_Jk</code></p>
+<pre class="hljs"><code>parseURL(<span class="hljs-string">"https://youtu.be/1xo3af_6_Jk"</span>);</code></pre><pre class="hljs"><code><span class="hljs-comment">// output</span>
 {
     <span class="hljs-string">"source"</span>: <span class="hljs-string">"https://youtu.be/1xo3af_6_Jk"</span>,
     <span class="hljs-string">"error"</span>: <span class="hljs-literal">null</span>,
@@ -219,10 +235,9 @@ parseURL(<span class="hljs-string">"https://youtu.be/1xo3af_6_Jk"</span>);
         <span class="hljs-string">"scheme"</span>: <span class="hljs-string">"data:"</span>,
         <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"data"</span>
     }
-}
-
-parseURL(<span class="hljs-string">"https://www.google.com/"</span>);
-<span class="hljs-comment">// output</span>
+}</code></pre><p><a name="example-parse-3"></a>
+<strong>Parse Example 3</strong> &mdash; <code>https://www.google.com/</code></p>
+<pre class="hljs"><code>parseURL(<span class="hljs-string">"https://www.google.com/"</span>);</code></pre><pre class="hljs"><code><span class="hljs-comment">// output</span>
 {
     <span class="hljs-string">"source"</span>: <span class="hljs-string">"https://www.google.com/"</span>,
     <span class="hljs-string">"error"</span>: <span class="hljs-literal">null</span>,
@@ -268,10 +283,9 @@ parseURL(<span class="hljs-string">"https://www.google.com/"</span>);
         <span class="hljs-string">"scheme"</span>: <span class="hljs-string">"data:"</span>,
         <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"data"</span>
     }
-}
-
-parseURL(<span class="hljs-string">"https://google.com/"</span>);
-<span class="hljs-comment">// output</span>
+}</code></pre><p><a name="example-parse-4"></a>
+<strong>Parse Example 4</strong> &mdash; <code>https://google.com/</code></p>
+<pre class="hljs"><code>parseURL(<span class="hljs-string">"https://google.com/"</span>);</code></pre><pre class="hljs"><code><span class="hljs-comment">// output</span>
 {
     <span class="hljs-string">"source"</span>: <span class="hljs-string">"https://google.com/"</span>,
     <span class="hljs-string">"error"</span>: <span class="hljs-literal">null</span>,
@@ -317,10 +331,9 @@ parseURL(<span class="hljs-string">"https://google.com/"</span>);
         <span class="hljs-string">"scheme"</span>: <span class="hljs-string">"data:"</span>,
         <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"data"</span>
     }
-}
-
-parseURL(<span class="hljs-string">"google.com"</span>);
-<span class="hljs-comment">// output</span>
+}</code></pre><p><a name="example-parse-5"></a>
+<strong>Parse Example 5</strong> &mdash; <code>google.com</code></p>
+<pre class="hljs"><code>parseURL(<span class="hljs-string">"google.com"</span>);</code></pre><pre class="hljs"><code><span class="hljs-comment">// output</span>
 {
     <span class="hljs-string">"source"</span>: <span class="hljs-string">"google.com"</span>,
     <span class="hljs-string">"error"</span>: <span class="hljs-literal">null</span>,

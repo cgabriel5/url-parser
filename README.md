@@ -10,6 +10,7 @@ An experimental JavaScript URL parser.
 - [Add To Project](#add-to-project)
 - [API](#api)
 - [Usage](#usage)
+    - [Examples](#usage-examples)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -108,10 +109,27 @@ document.onreadystatechange = function() {
 <a name="usage"></a>
 ### Usage
 
-For an exhaustive list of tested URLs see `js/source/test.js`. Run `index.html` and open up the console. URLs that fail the parser will be found at the very bottom of the webpage.
+**Note**: The following are just examples and is not an exhaustive list. For an exhaustive list of tested URLs see `js/source/test.js`. Run `index.html` and open up the console. URLs that fail the parser will be found at the very bottom of both the console (red error message) and the webpage (red border).
+
+<a name="usage-examples-toc"></a>
+- [Examples](#usage-examples)
+    - [Parse Example 1](#example-parse-1)
+    - [Parse Example 2](#example-parse-2)
+    - [Parse Example 3](#example-parse-3)
+    - [Parse Example 4](#example-parse-4)
+    - [Parse Example 5](#example-parse-5)
+
+<a name="usage-examples"></a>
+### Examples
+
+<a name="example-parse-1"></a>
+**Parse Example 1** &mdash; `https://www.youtube.com/watch?v=Gj2nOk8af-o`
 
 ```js
 parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
+```
+
+```js
 // output
 {
     "source": "https://www.youtube.com/watch?v=Gj2nOk8af-o",
@@ -161,8 +179,16 @@ parseURL("https://www.youtube.com/watch?v=Gj2nOk8af-o");
         "protocol": "data"
     }
 }
+```
 
+<a name="example-parse-2"></a>
+**Parse Example 2** &mdash; `https://youtu.be/1xo3af_6_Jk`
+
+```js
 parseURL("https://youtu.be/1xo3af_6_Jk");
+```
+
+```js
 // output
 {
     "source": "https://youtu.be/1xo3af_6_Jk",
@@ -210,8 +236,16 @@ parseURL("https://youtu.be/1xo3af_6_Jk");
         "protocol": "data"
     }
 }
+```
 
+<a name="example-parse-3"></a>
+**Parse Example 3** &mdash; `https://www.google.com/`
+
+```js
 parseURL("https://www.google.com/");
+```
+
+```js
 // output
 {
     "source": "https://www.google.com/",
@@ -259,8 +293,16 @@ parseURL("https://www.google.com/");
         "protocol": "data"
     }
 }
+```
 
+<a name="example-parse-4"></a>
+**Parse Example 4** &mdash; `https://google.com/`
+
+```js
 parseURL("https://google.com/");
+```
+
+```js
 // output
 {
     "source": "https://google.com/",
@@ -308,8 +350,16 @@ parseURL("https://google.com/");
         "protocol": "data"
     }
 }
+```
 
+<a name="example-parse-5"></a>
+**Parse Example 5** &mdash; `google.com`
+
+```js
 parseURL("google.com");
+```
+
+```js
 // output
 {
     "source": "google.com",
